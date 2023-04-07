@@ -11,7 +11,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterModel extends BaseModelFrom<User> {
+public class UserRegisterModel implements BaseModelFrom<User> {
     String username;
 
     String password;

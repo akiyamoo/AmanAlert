@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserModel extends BaseModelTo<User> {
+public class UserModel implements BaseModelTo<User> {
     Long id;
 
     String username;
