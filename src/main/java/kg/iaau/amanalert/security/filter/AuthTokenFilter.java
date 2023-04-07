@@ -4,7 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kg.iaau.amanalert.security.details.UserDetailsServiceImpl;
 import kg.iaau.amanalert.util.JwtUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

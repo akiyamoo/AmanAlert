@@ -1,4 +1,4 @@
-package kg.iaau.amanalert.model;
+package kg.iaau.amanalert.model.auth;
 
 import kg.iaau.amanalert.enums.Role;
 import lombok.Builder;

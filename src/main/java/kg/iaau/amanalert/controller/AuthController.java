@@ -1,6 +1,6 @@
 package kg.iaau.amanalert.controller;
 
-import kg.iaau.amanalert.model.LoginRequestModel;
+import kg.iaau.amanalert.model.auth.LoginRequestModel;
 import kg.iaau.amanalert.service.AuthService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

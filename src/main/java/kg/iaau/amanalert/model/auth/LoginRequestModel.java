@@ -1,4 +1,4 @@
-package kg.iaau.amanalert.model;
+package kg.iaau.amanalert.model.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

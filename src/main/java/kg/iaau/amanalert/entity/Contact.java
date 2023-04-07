@@ -2,37 +2,29 @@ package kg.iaau.amanalert.entity;
 
 import jakarta.persistence.*;
 import kg.iaau.amanalert.base.BaseEntity;
-import kg.iaau.amanalert.enums.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
-
 @Entity
-@Table(name = "USERS")
+@Table(name = "CONTACTS")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User extends BaseEntity {
+public class Contact extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     Long id;
 
-    String username;
-
-    String password;
-
-    @Enumerated(EnumType.STRING)
-    Role role;
-
-    String phone;
-
-    Date birthDate;
-
     String name;
+
+    String phoneNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    User user;
 }

@@ -1,8 +1,8 @@
 package kg.iaau.amanalert.service.impl;
 
 import kg.iaau.amanalert.enums.Role;
-import kg.iaau.amanalert.model.AuthModel;
-import kg.iaau.amanalert.model.LoginRequestModel;
+import kg.iaau.amanalert.model.auth.AuthModel;
+import kg.iaau.amanalert.model.auth.LoginRequestModel;
 import kg.iaau.amanalert.security.details.UserDetailsImpl;
 import kg.iaau.amanalert.service.AuthService;
 import kg.iaau.amanalert.util.JwtUtils;
@@ -20,13 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     AuthenticationManager authenticationManager;
-
     JwtUtils jwtUtils;
-
-    @Override
-    public String getToken() {
-        return "Hello";
-    }
 
     @Override
     public AuthModel authorize(LoginRequestModel requestModel) {
