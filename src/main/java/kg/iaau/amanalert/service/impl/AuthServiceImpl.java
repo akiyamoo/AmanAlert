@@ -5,20 +5,15 @@ import kg.iaau.amanalert.model.AuthModel;
 import kg.iaau.amanalert.model.LoginRequestModel;
 import kg.iaau.amanalert.security.details.UserDetailsImpl;
 import kg.iaau.amanalert.service.AuthService;
-import kg.iaau.amanalert.service.UserService;
 import kg.iaau.amanalert.util.JwtUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -42,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        String jwt = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
+        String jwt = jwtUtils.generateTokenFromUsername(userDetails);
 
         Role role = Role.valueOf(userDetails.getAuthorities().toArray()[0].toString());
 

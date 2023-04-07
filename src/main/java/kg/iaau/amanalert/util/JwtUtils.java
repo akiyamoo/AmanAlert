@@ -1,15 +1,11 @@
 package kg.iaau.amanalert.util;
 
 import io.jsonwebtoken.*;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import kg.iaau.amanalert.security.details.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.WebUtils;
 
 import java.util.Date;
 
@@ -17,10 +13,10 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtUtils {
-    @Value("${bezkoder.app.jwtSecret}") // TODO
+    @Value("${aman-alert.app.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${bezkoder.app.jwtExpirationMs}") // TODO
+    @Value("${aman-alert.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
     public String getUserNameFromJwtToken(String token) {
@@ -46,9 +42,9 @@ public class JwtUtils {
         return false;
     }
 
-    public String generateTokenFromUsername(String username) {
+    public String generateTokenFromUsername(UserDetailsImpl userDetails) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)

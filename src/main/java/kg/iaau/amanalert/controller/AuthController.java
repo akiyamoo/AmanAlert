@@ -6,10 +6,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +20,11 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestModel loginRequest) {
         // TODO
         return ResponseEntity.ok(authService.authorize(loginRequest));
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        // Тест роут
+        return ResponseEntity.ok("HELLO!");
     }
 }
