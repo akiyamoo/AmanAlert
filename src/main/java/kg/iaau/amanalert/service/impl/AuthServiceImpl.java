@@ -36,6 +36,8 @@ public class AuthServiceImpl implements AuthService {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(requestModel.getUsername());
 
+        log.info("authorize(): {}", userDetails.getUsername());
+        log.info("authorize(): {}", passwordEncoder.matches(requestModel.getPassword(), userDetails.getPassword()));
         if (!passwordEncoder.matches(requestModel.getPassword(), userDetails.getPassword())) {
              throw new AuthenticationException("Не найден пользователь!");
         }
