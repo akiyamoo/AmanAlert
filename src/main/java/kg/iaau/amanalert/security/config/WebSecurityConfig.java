@@ -2,7 +2,8 @@ package kg.iaau.amanalert.security.config;
 
 import kg.iaau.amanalert.handler.AuthEntryPointJwt;
 import kg.iaau.amanalert.security.details.UserDetailsServiceImpl;
-import kg.iaau.amanalert.security.filter.AuthTokenFilter;
+import kg.iaau.amanalert.security.filter.TokenAuthenticationFilter;
+import kg.iaau.amanalert.util.JwtUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,7 +30,12 @@ public class WebSecurityConfig {
 
     AuthEntryPointJwt unauthorizedHandler;
 
-    AuthTokenFilter authTokenFilter;
+    JwtUtils jwtUtils;
+
+    private static final String[] PUBLIC_URLS = {
+            "/api/auth/signin", "/api/test/**", "/swagger-ui.html/**", "/configuration/**", "/swagger-resources/**",
+            "/v3/api-docs/**","/webjars/**", "swagger-ui/**", "/v3/**"
+    };
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -52,14 +58,14 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager manager) throws Exception {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeHttpRequests((requests) -> requests.requestMatchers("/api/auth/signin", "/api/test/**").permitAll()
+                .authorizeHttpRequests((requests) -> requests.requestMatchers(PUBLIC_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new TokenAuthenticationFilter(manager, userDetailsService, jwtUtils), UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider());
 
         return http.build();
