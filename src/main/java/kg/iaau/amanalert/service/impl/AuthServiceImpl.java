@@ -32,25 +32,30 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthModel authorize(LoginRequestModel requestModel) throws AuthenticationException {
-        log.info("username: {}", requestModel.getUsername());
+        try {
+            log.info("username: {}", requestModel.getUsername());
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(requestModel.getUsername());
+            UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(requestModel.getUsername());
 
-        log.info("authorize(): {}", userDetails.getUsername());
-        log.info("authorize(): {}", passwordEncoder.matches(requestModel.getPassword(), userDetails.getPassword()));
-        if (!passwordEncoder.matches(requestModel.getPassword(), userDetails.getPassword())) {
-             throw new AuthenticationException("Не найден пользователь!");
+            log.info("authorize(): {}", userDetails.getUsername());
+            log.info("authorize(): {}", passwordEncoder.matches(requestModel.getPassword(), userDetails.getPassword()));
+            if (!passwordEncoder.matches(requestModel.getPassword(), userDetails.getPassword())) {
+                throw new AuthenticationException("Не найден пользователь!");
+            }
+
+            String jwt = jwtUtils.generateTokenFromUsername(userDetails);
+
+            Role role = Role.valueOf(userDetails.getAuthorities().toArray()[0].toString());
+
+            return AuthModel.builder()
+                    .username(userDetails.getUsername())
+                    .id(userDetails.getId())
+                    .message(jwt)
+                    .role(role)
+                    .build();
+        } catch (Exception e) {
+            log.info("ex: {}", e);
+            return null;
         }
-
-        String jwt = jwtUtils.generateTokenFromUsername(userDetails);
-
-        Role role = Role.valueOf(userDetails.getAuthorities().toArray()[0].toString());
-
-        return AuthModel.builder()
-                .username(userDetails.getUsername())
-                .id(userDetails.getId())
-                .message(jwt)
-                .role(role)
-                .build();
     }
 }
