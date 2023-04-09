@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -62,25 +63,14 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager manager) throws Exception {
         http.csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .authorizeHttpRequests((requests) -> requests.requestMatchers(PUBLIC_URLS).permitAll()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeHttpRequests((requests) -> requests.requestMatchers(HttpMethod.POST, PUBLIC_URLS).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterAt(new TokenAuthenticationFilter(manager, userDetailsService, jwtUtils), UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider());
 
         return http.build();
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOriginPatterns("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
-                        .allowCredentials(true);
-            }
-        };
     }
 }
