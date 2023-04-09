@@ -1,4 +1,5 @@
-/* TODO настроить
+/*
+ //TODO настроить
 package kg.iaau.amanalert.security.config;
 
 import kg.iaau.amanalert.entity.User;
@@ -24,7 +25,7 @@ public class Runner implements CommandLineRunner {
         repository.save(User.builder()
                         .role(Role.ADMIN)
                         .username("admin")
-                        .password(passwordEncoder.encode("Eldar2002"))
+                        .password(passwordEncoder.encode("Admin2023"))
                 .build());
     }
 }
