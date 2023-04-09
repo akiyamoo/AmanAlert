@@ -1,4 +1,3 @@
-/*
  //TODO настроить
 package kg.iaau.amanalert.security.config;
 
@@ -29,4 +28,3 @@ public class Runner implements CommandLineRunner {
                 .build());
     }
 }
-*/
