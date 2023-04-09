@@ -35,7 +35,7 @@ public class WebSecurityConfig {
     JwtUtils jwtUtils;
 
     private static final String[] PUBLIC_URLS = {
-            "/api/auth/signin", "/api/test/**", "swagger-ui/**", "/v3/**"
+            "/api/auth/**", "/api/test/**", "swagger-ui/**", "/v3/**"
     };
 
     @Bean
