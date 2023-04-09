@@ -60,12 +60,11 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager manager) throws Exception {
-        http.cors().and().csrf().disable()
+        http.csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .authorizeHttpRequests((requests) -> requests.requestMatchers(PUBLIC_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
-                .sessionManagement().disable()
                 .addFilterAt(new TokenAuthenticationFilter(manager, userDetailsService, jwtUtils), UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider());
 
