@@ -56,6 +56,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
     private String parseJwt(HttpServletRequest request) {
-        return request.getHeader(AUTHORIZATION_HEADER).split(" ")[1];
+        try {
+            return request.getHeader(AUTHORIZATION_HEADER).split(" ")[1];
+        } catch (Exception e) {
+            log.error("parseJwt(): {} {}", e.getMessage(), request.getRequestURL());
+            return null;
+        }
     }
 }
