@@ -29,7 +29,7 @@ public class NewsController {
         return newsService.getImageById(newsId);
     }
 
-    @PostMapping("/save")
+    @PostMapping("/create")
     public ResponseEntity<?> saveNews(@RequestParam("data") String json, @RequestParam("image") MultipartFile image) {
         try {
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();

@@ -26,5 +26,9 @@ public class News extends BaseEntity {
     String description;
 
     @Column
-    byte[] image;
+    @Builder.Default
+    byte[] image = new byte[0];
+
+    @Column
+    String imageName;
 }

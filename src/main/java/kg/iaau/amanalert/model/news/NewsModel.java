@@ -9,18 +9,18 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewsModel implements BaseModelTo<News>, BaseModelFrom<News> {
+public class NewsModel implements BaseModelTo<News> {
     Long id;
     String title;
     String description;
     String urlImage;
-    @Override
-    public News ToEntity() {
-        return null;
-    }
 
     @Override
     public NewsModel toModel(News news) {
-        return null;
+        this.id = news.getId();
+        this.description = news.getDescription();
+        this.title = news.getTitle();
+
+        return this;
     }
 }
