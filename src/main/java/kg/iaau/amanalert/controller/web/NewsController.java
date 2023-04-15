@@ -47,4 +47,16 @@ public class NewsController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @PostMapping("/delete/{newsId}")
+    public ResponseEntity<?> deleteNews(@PathVariable Long newsId) {
+        try {
+            newsService.deleteNews(newsId);
+            return ResponseEntity.ok("DELETED");
+        } catch (Exception e) {
+            log.error("deleteNews(): {}", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }

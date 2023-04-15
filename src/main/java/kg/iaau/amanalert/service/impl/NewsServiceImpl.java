@@ -15,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.webjars.NotFoundException;
 
 import java.io.IOException;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -49,12 +50,17 @@ public class NewsServiceImpl implements NewsService {
                     .build();
         }
 
-        return new NewsModel().toModel(news);
+        return new NewsModel().toModel(repository.save(news));
     }
 
     @Override
-    public void deleteNews() {
+    public void deleteNews(Long newsId) {
+        News news = repository.findByIdAndDeletedIsNull(newsId).orElseThrow(
+                () -> new NotFoundException(String.format("News with id = %s not found", newsId))
+        );
 
+        news.setDeleted(new Date());
+        repository.save(news);
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public interface NewsService {
     NewsModel saveNews(MultiValueMap<String, Object> formData) throws IOException;
-    void deleteNews();
+    void deleteNews(Long newsId);
 
     byte[] getImageById(Long newsId);
 }
