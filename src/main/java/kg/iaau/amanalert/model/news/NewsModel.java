@@ -1,9 +1,11 @@
 package kg.iaau.amanalert.model.news;
 
-import kg.iaau.amanalert.base.BaseModelFrom;
 import kg.iaau.amanalert.base.BaseModelTo;
 import kg.iaau.amanalert.entity.News;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
