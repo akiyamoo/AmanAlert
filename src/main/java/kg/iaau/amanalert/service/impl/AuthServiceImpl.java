@@ -1,11 +1,10 @@
 package kg.iaau.amanalert.service.impl;
 
-import kg.iaau.amanalert.enums.Role;
+import kg.iaau.amanalert.entity.User;
 import kg.iaau.amanalert.model.auth.AuthModel;
 import kg.iaau.amanalert.model.auth.LoginRequestModel;
-import kg.iaau.amanalert.security.details.UserDetailsImpl;
-import kg.iaau.amanalert.security.details.UserDetailsServiceImpl;
 import kg.iaau.amanalert.service.AuthService;
+import kg.iaau.amanalert.service.UserService;
 import kg.iaau.amanalert.util.JwtUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,33 +23,30 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthServiceImpl implements AuthService {
-    AuthenticationManager authenticationManager;
     JwtUtils jwtUtils;
-    PasswordEncoder passwordEncoder;
-    UserDetailsService userDetailsService;
+    AuthenticationManager authenticationManager;
+    UserService userService;
 
     @Override
     public AuthModel authorize(LoginRequestModel requestModel) throws AuthenticationException {
         try {
             log.info("username: {}", requestModel.getUsername());
 
-            UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(requestModel.getUsername());
+            User user = userService.getUserByUsername(requestModel.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Нету такого пользователя!"));
 
-            log.info("authorize(): {}", userDetails.getUsername());
-            log.info("authorize(): {}", passwordEncoder.matches(requestModel.getPassword(), userDetails.getPassword()));
-            if (!passwordEncoder.matches(requestModel.getPassword(), userDetails.getPassword())) {
-                throw new AuthenticationException("Не найден пользователь!");
-            }
+            Authentication authResult = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+            );
 
-            String jwt = jwtUtils.generateTokenFromUsername(userDetails);
+            SecurityContextHolder.getContext().setAuthentication(authResult);
 
-            Role role = Role.valueOf(userDetails.getAuthorities().toArray()[0].toString());
+            String jwt = jwtUtils.generateTokenFromUsername(user);
 
             return AuthModel.builder()
-                    .username(userDetails.getUsername())
-                    .id(userDetails.getId())
+                    .username(user.getUsername())
+                    .id(user.getId())
                     .message(jwt)
-                    .role(role)
+                    .role(user.getRole())
                     .build();
         } catch (Exception e) {
             log.info("ex: {}", e);

@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -39,5 +41,9 @@ public class UserServiceImpl implements UserService {
         registerModel.setPassword(encoder.encode(registerModel.getPassword()));
 
         return new UserModel().toModel(save(registerModel.ToEntity()));
+    }
+
+    public Optional<User> getUserByUsername(String username) {
+        return repository.findByUsername(username);
     }
 }

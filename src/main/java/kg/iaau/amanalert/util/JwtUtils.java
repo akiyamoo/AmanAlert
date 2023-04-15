@@ -1,7 +1,7 @@
 package kg.iaau.amanalert.util;
 
 import io.jsonwebtoken.*;
-import kg.iaau.amanalert.security.details.UserDetailsImpl;
+import kg.iaau.amanalert.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,9 +42,9 @@ public class JwtUtils {
         return false;
     }
 
-    public String generateTokenFromUsername(UserDetailsImpl userDetails) {
+    public String generateTokenFromUsername(User user) {
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
