@@ -22,10 +22,4 @@ public class AuthController {
         // TODO
         return ResponseEntity.ok(authService.authorize(loginRequest));
     }
-
-    @GetMapping("/test")
-    public ResponseEntity<?> test() {
-        // Тест роут
-        return ResponseEntity.ok("HELLO!");
-    }
 }

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
+import org.webjars.NotFoundException;
 
 import java.io.IOException;
 
@@ -27,12 +28,26 @@ public class NewsServiceImpl implements NewsService {
     public NewsModel saveNews(MultiValueMap<String, Object> formData) throws IOException {
         NewsModel model = gson.fromJson((String) formData.getFirst("data"), NewsModel.class);
         ByteArrayResource imageResource = (ByteArrayResource) formData.getFirst("image");
-        News news = repository.save(News.builder()
-                .description(model.getDescription())
-                .title(model.getTitle())
-                .image(imageResource.getByteArray())
-                .imageName(imageResource.getFilename())
-                .build());
+        News news;
+
+        if (model.getId() != null) {
+            news = repository.findByIdAndDeletedIsNull(model.getId())
+                    .orElseThrow(
+                            () -> new NotFoundException(String.format("News with id = %s not found", model.getId()))
+                    );
+            news.setImage(imageResource.getByteArray().length == 0 ? news.getImage() : imageResource.getByteArray());
+            news.setImageName(imageResource.getFilename() == null ? news.getImageName() : imageResource.getFilename());
+            news.setTitle(model.getTitle());
+            news.setDescription(model.getDescription());
+        }
+        else {
+            news = News.builder()
+                    .description(model.getDescription())
+                    .title(model.getTitle())
+                    .image(imageResource.getByteArray())
+                    .imageName(imageResource.getFilename())
+                    .build();
+        }
 
         return new NewsModel().toModel(news);
     }

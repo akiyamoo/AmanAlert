@@ -47,7 +47,6 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtils.getUserNameFromJwtToken(token));
 
             log.info("user: {}", userDetails.getUsername());
-            log.info("user: {}", userDetails.getPassword());
             Authentication authResult = getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword())
             );

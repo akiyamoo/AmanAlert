@@ -29,7 +29,7 @@ public class NewsController {
         return newsService.getImageById(newsId);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/save")
     public ResponseEntity<?> saveNews(@RequestParam("data") String json, @RequestParam("image") MultipartFile image) {
         try {
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
@@ -42,10 +42,8 @@ public class NewsController {
             });
 
             return ResponseEntity.ok(newsService.saveNews(formData));
-        } catch (IOException e) {
-            log.error("saveNews(): {}", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
+            log.error("saveNews(): {}", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
