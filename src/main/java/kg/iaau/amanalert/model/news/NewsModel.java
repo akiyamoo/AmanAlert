@@ -20,6 +20,7 @@ public class NewsModel implements BaseModelTo<News> {
         this.id = news.getId();
         this.description = news.getDescription();
         this.title = news.getTitle();
+        this.urlImage = "/api/news/image/" + this.id;
 
         return this;
     }
