@@ -16,6 +16,8 @@ import org.webjars.NotFoundException;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,5 +68,12 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public byte[] getImageById(Long newsId) {
         return repository.findById(newsId).orElse(new News()).getImage();
+    }
+
+    @Override
+    public List<NewsModel> getAllNews() {
+        return repository.findAllByDeletedIsNullOrderByIdDesc().stream()
+                .map(n -> new NewsModel().toModel(n))
+                .collect(Collectors.toList());
     }
 }

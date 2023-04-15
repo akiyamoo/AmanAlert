@@ -1,5 +1,6 @@
 package kg.iaau.amanalert.controller.web;
 
+import kg.iaau.amanalert.model.news.NewsModel;
 import kg.iaau.amanalert.service.NewsService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +24,11 @@ import java.io.IOException;
 @Slf4j
 public class NewsController {
     NewsService newsService;
+
+    @GetMapping("/get-all")
+    public ResponseEntity<List<NewsModel>> getAllNews() {
+        return ResponseEntity.ok(newsService.getAllNews());
+    }
 
     @GetMapping(value = "/image/{newsId}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getImage(@PathVariable Long newsId) {
