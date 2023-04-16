@@ -1,6 +1,8 @@
 package kg.iaau.amanalert.controller;
 
+import kg.iaau.amanalert.enums.Role;
 import kg.iaau.amanalert.model.news.NewsModel;
+import kg.iaau.amanalert.service.GrantService;
 import kg.iaau.amanalert.service.NewsService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import java.util.List;
 @Slf4j
 public class NewsController {
     NewsService newsService;
+    GrantService grantService;
 
     @GetMapping("/get-all")
     public ResponseEntity<List<NewsModel>> getAllNews() {
@@ -37,6 +40,8 @@ public class NewsController {
 
     @PostMapping("/save")
     public ResponseEntity<?> saveNews(@RequestParam("data") String json, @RequestParam("image") MultipartFile image) {
+        grantService.hasAny(Role.ADMIN);
+
         try {
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
             formData.add("data", json);
@@ -56,6 +61,7 @@ public class NewsController {
 
     @PostMapping("/delete/{newsId}")
     public ResponseEntity<?> deleteNews(@PathVariable Long newsId) {
+        grantService.hasAny(Role.ADMIN);
         try {
             newsService.deleteNews(newsId);
             return ResponseEntity.ok("DELETED");

@@ -4,6 +4,7 @@ import kg.iaau.amanalert.base.BaseModelFrom;
 import kg.iaau.amanalert.entity.User;
 import kg.iaau.amanalert.enums.Role;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
@@ -11,17 +12,13 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserRegisterModel implements BaseModelFrom<User> {
     String username;
-
     String password;
-
     Role role;
-
     String phone;
-
     Date birthDate;
-
     String name;
 
     @Override

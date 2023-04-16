@@ -1,6 +1,8 @@
 package kg.iaau.amanalert.controller.test;
 
+import kg.iaau.amanalert.enums.Role;
 import kg.iaau.amanalert.model.auth.LoginRequestModel;
+import kg.iaau.amanalert.service.GrantService;
 import kg.iaau.amanalert.service.SmsSenderService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     SmsSenderService smsSenderService;
+    GrantService grantService;
 
     @PostMapping("/send-sms")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestModel loginRequest) throws AuthenticationException {
+        grantService.hasAny(Role.ADMIN);
         // TODO
         return ResponseEntity.ok(smsSenderService.sendMessage(loginRequest.getUsername(), loginRequest.getPassword()));
     }

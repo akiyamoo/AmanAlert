@@ -23,6 +23,7 @@ public class User extends BaseEntity {
     @Column(name = "ID")
     Long id;
 
+    @Column(unique = true)
     String username;
 
     String password;
@@ -35,4 +36,9 @@ public class User extends BaseEntity {
     Date birthDate;
 
     String name;
+
+    @Builder.Default
+    Boolean isActive = true;
+
+    String activateCode;
 }
