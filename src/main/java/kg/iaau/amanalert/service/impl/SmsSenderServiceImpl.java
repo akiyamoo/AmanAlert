@@ -16,24 +16,28 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class SmsSenderServiceImpl implements SmsSenderService {
 
-    PhoneNumber twilioNumber;
+    String accountSid;
+    String authToken;
+    String twilioPhone;
 
     public SmsSenderServiceImpl(
             @Value("${aman.alert.twilio.account-sid}") String accountSid,
             @Value("${aman.alert.twilio.auth-token}") String authToken,
             @Value("${aman.alert.twilio.twilio-number}") String twilioPhone
     ) {
-        Twilio.init(accountSid, authToken);
-        twilioNumber = new PhoneNumber(twilioPhone);
+        this.accountSid = accountSid;
+        this.authToken = authToken;
+        this.twilioPhone = twilioPhone;
     }
 
     @Override
     public boolean sendMessage(String phone, String message) {
         Message msg;
+        Twilio.init(accountSid, authToken);
         try {
             msg = Message.creator(
                     new PhoneNumber(phone),
-                    twilioNumber,
+                    new PhoneNumber(twilioPhone),
                     message
             ).create();
         } catch (Exception e) {

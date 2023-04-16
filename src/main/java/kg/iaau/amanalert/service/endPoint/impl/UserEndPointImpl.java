@@ -46,7 +46,8 @@ public class UserEndPointImpl implements UserEndPoint {
                         .build()
         );
 
-        if (user.getId() != null || user.getId() != 0) {
+        if (user.getId() != null) {
+            user.setPassword(generatePassword());
             user.setActivateCode(getCode());
             user.setIsActive(false);
         }
@@ -85,15 +86,18 @@ public class UserEndPointImpl implements UserEndPoint {
         if (!user.getActivateCode().equals(model.getCode())) {
             throw new UserRegisterException("Invalid/Incorrect activation code!");
         }
+        String password = user.getPassword();
 
         user.setActivateCode(null);
         user.setIsActive(true);
+        user.setPassword(userService.encodePassword(password));
         user = userService.save(user);
 
         return UserMobileSignInModel.builder()
                 .id(user.getId())
+                .username(user.getUsername())
                 .token(authService.generateToken(user))
-                .password(user.getPassword())
+                .password(password)
                 .build();
     }
 
@@ -112,7 +116,7 @@ public class UserEndPointImpl implements UserEndPoint {
             int flag = random.nextInt(0, 90);
             if (flag > 70) builder.append((char) (random.nextInt(26) + 'A'));
             else if (flag > 40) builder.append((char) (random.nextInt(26) + 'a'));
-            else builder.append((char) random.nextInt(0, 9));
+            else builder.append(random.nextInt(0, 9));
         }
 
         return builder.toString();

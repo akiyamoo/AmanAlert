@@ -1,7 +1,6 @@
 package kg.iaau.amanalert.service.impl;
 
 import kg.iaau.amanalert.entity.User;
-import kg.iaau.amanalert.exception.UserRegisterException;
 import kg.iaau.amanalert.model.user.UserModel;
 import kg.iaau.amanalert.model.user.UserRegisterModel;
 import kg.iaau.amanalert.repo.UserRepository;
@@ -48,5 +47,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUserByUsernameAndIsActive(String username, Boolean isActive) {
         return repository.findByUsernameAndIsActive(username, isActive);
+    }
+
+    @Override
+    public String encodePassword(String password) {
+        return encoder.encode(password);
     }
 }
