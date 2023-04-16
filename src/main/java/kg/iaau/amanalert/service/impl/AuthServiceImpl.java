@@ -40,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
 
             SecurityContextHolder.getContext().setAuthentication(authResult);
 
-            String jwt = jwtUtils.generateTokenFromUsername(user);
+            String jwt = generateToken(user);
 
             return AuthModel.builder()
                     .username(user.getUsername())
@@ -52,5 +52,10 @@ public class AuthServiceImpl implements AuthService {
             log.info("ex: {}", e);
             return null;
         }
+    }
+
+    @Override
+    public String generateToken(User user) {
+        return jwtUtils.generateTokenFromUsername(user);
     }
 }

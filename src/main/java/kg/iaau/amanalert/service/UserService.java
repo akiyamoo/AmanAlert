@@ -11,6 +11,10 @@ public interface UserService {
     boolean existsByUsername(String username);
     User save(User user);
 
-    UserModel registerWebUser(UserRegisterModel registerModel) throws UserRegisterException;
+    UserModel createUser(UserRegisterModel registerModel) throws UserRegisterException;
     public Optional<User> getUserByUsername(String username);
+
+    public Optional<User> getUserByUsernameAndIsActive(String username, Boolean isActive);
+
+    String encodePassword(String password);
 }

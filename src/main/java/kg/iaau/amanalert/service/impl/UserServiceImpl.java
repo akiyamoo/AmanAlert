@@ -1,12 +1,10 @@
 package kg.iaau.amanalert.service.impl;
 
 import kg.iaau.amanalert.entity.User;
-import kg.iaau.amanalert.exception.UserRegisterException;
 import kg.iaau.amanalert.model.user.UserModel;
 import kg.iaau.amanalert.model.user.UserRegisterModel;
 import kg.iaau.amanalert.repo.UserRepository;
 import kg.iaau.amanalert.service.UserService;
-import kg.iaau.amanalert.util.UserValidateUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,15 +33,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserModel registerWebUser(UserRegisterModel registerModel) throws UserRegisterException {
-        UserValidateUtil.validateUserRegister(registerModel);
-
+    public UserModel createUser(UserRegisterModel registerModel) {
         registerModel.setPassword(encoder.encode(registerModel.getPassword()));
 
         return new UserModel().toModel(save(registerModel.ToEntity()));
     }
 
+    @Override
     public Optional<User> getUserByUsername(String username) {
         return repository.findByUsername(username);
+    }
+
+    @Override
+    public Optional<User> getUserByUsernameAndIsActive(String username, Boolean isActive) {
+        return repository.findByUsernameAndIsActive(username, isActive);
+    }
+
+    @Override
+    public String encodePassword(String password) {
+        return encoder.encode(password);
     }
 }
