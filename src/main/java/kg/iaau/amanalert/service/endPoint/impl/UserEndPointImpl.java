@@ -75,7 +75,7 @@ public class UserEndPointImpl implements UserEndPoint {
                 () -> smsSenderService.sendMessage("+" + phoneNumber, codeActivateMessage(user.getActivateCode())),
                 CompletableFuture.delayedExecutor(500L, TimeUnit.MILLISECONDS)
         );
-        return "Resend SMS successfully!";
+        return "Resend SMS successfully! Code: " + user.getActivateCode();
     }
 
     @Override
