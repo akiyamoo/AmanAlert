@@ -1,4 +1,4 @@
-package kg.iaau.amanalert.controller.web;
+package kg.iaau.amanalert.controller;
 
 import kg.iaau.amanalert.model.news.NewsModel;
 import kg.iaau.amanalert.service.NewsService;
