@@ -12,6 +12,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,7 @@ public class NewsController {
     }
 
     @PostMapping("/save")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> saveNews(@RequestParam("data") String json, @RequestParam("image") MultipartFile image) {
         grantService.hasAny(Role.ADMIN);
 
@@ -60,6 +62,7 @@ public class NewsController {
     }
 
     @PostMapping("/delete/{newsId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteNews(@PathVariable Long newsId) {
         grantService.hasAny(Role.ADMIN);
         try {
