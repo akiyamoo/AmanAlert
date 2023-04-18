@@ -20,6 +20,7 @@ public class UserRegisterModel implements BaseModelFrom<User> {
     String phone;
     Date birthDate;
     String name;
+    String email;
 
     @Override
     public User ToEntity() {
@@ -30,6 +31,7 @@ public class UserRegisterModel implements BaseModelFrom<User> {
                 .phone(phone)
                 .birthDate(birthDate)
                 .name(name)
+                .email(email)
                 .build();
     }
 }

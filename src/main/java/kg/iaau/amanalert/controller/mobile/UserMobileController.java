@@ -47,4 +47,14 @@ public class UserMobileController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @PostMapping("/edit")
+    public ResponseEntity<?> editUser(@RequestBody UserMobileConfirmModel editModel) {
+        // TODO
+        try {
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

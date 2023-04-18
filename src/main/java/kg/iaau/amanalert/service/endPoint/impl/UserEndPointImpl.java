@@ -1,10 +1,13 @@
 package kg.iaau.amanalert.service.endPoint.impl;
 
+import com.google.gson.Gson;
 import kg.iaau.amanalert.entity.User;
 import kg.iaau.amanalert.enums.Role;
 import kg.iaau.amanalert.exception.UserRegisterException;
 import kg.iaau.amanalert.model.user.UserMobileConfirmModel;
 import kg.iaau.amanalert.model.user.UserMobileSignInModel;
+import kg.iaau.amanalert.model.user.UserModel;
+import kg.iaau.amanalert.model.user.UserRegisterModel;
 import kg.iaau.amanalert.service.AuthService;
 import kg.iaau.amanalert.service.SmsSenderService;
 import kg.iaau.amanalert.service.UserService;
@@ -14,7 +17,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -29,6 +34,7 @@ public class UserEndPointImpl implements UserEndPoint {
     SmsSenderService smsSenderService;
     AuthService authService;
     Random random = new Random();
+    Gson gson = new Gson();
 
     @Override
     public String signInOrRegisterMobileUser(String phoneNumber) throws UserRegisterException {
@@ -99,6 +105,29 @@ public class UserEndPointImpl implements UserEndPoint {
                 .token(authService.generateToken(user))
                 .password(password)
                 .build();
+    }
+
+    @Override
+    public UserModel createWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException {
+        UserRegisterModel model = gson.fromJson((String) formData.getFirst("data"), UserRegisterModel.class);
+        ByteArrayResource imageResource = (ByteArrayResource) formData.getFirst("image");
+
+        if (userService.getUserByUsername(model.getUsername()).isPresent()) {
+            throw new UserRegisterException("Such a username already exists!");
+        }
+        if (Role.WEB_USER != model.getRole()) {
+            throw new UserRegisterException("It is only possible to create a user with the role WEB_USER!");
+        }
+        if (model.getBirthDate() == null) {
+            throw new UserRegisterException("The date of birth is not filled in!");
+        }
+
+        UserValidateUtil.validatePhone(model.getPhone());
+        //UserValidateUtil.validateEmail(model.getEmail());
+        UserValidateUtil.validatePassword(model.getPassword());
+        UserValidateUtil.validateUsername(model.getUsername());
+
+        return userService.createUser(model, imageResource);
     }
 
     private String codeActivateMessage(String code) {

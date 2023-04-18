@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,10 +34,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserModel createUser(UserRegisterModel registerModel) {
+    public UserModel createUser(UserRegisterModel registerModel, ByteArrayResource imageResource) {
         registerModel.setPassword(encoder.encode(registerModel.getPassword()));
 
-        return new UserModel().toModel(save(registerModel.ToEntity()));
+        return new UserModel().toModel(save(registerModel.ToEntity().updateImage(imageResource.getByteArray())));
     }
 
     @Override

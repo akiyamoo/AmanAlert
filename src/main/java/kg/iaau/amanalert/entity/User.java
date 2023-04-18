@@ -41,4 +41,14 @@ public class User extends BaseEntity {
     Boolean isActive = true;
 
     String activateCode;
+
+    byte[] image;
+
+    String email;
+
+    public User updateImage(byte[] image) {
+        this.image = image;
+
+        return this;
+    }
 }

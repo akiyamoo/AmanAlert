@@ -3,6 +3,7 @@ package kg.iaau.amanalert.model.user;
 import kg.iaau.amanalert.base.BaseModelTo;
 import kg.iaau.amanalert.entity.User;
 import kg.iaau.amanalert.enums.Role;
+import kg.iaau.amanalert.util.UrlHostUtil;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -21,6 +22,8 @@ public class UserModel implements BaseModelTo<User> {
     String phone;
     Date birthDate;
     String name;
+    String email;
+    String urlImage;
 
     @Override
     public UserModel toModel(User user) {
@@ -30,6 +33,8 @@ public class UserModel implements BaseModelTo<User> {
         this.phone = user.getPhone();
         this.birthDate = user.getBirthDate();
         this.name = user.getName();
+        this.email = user.getEmail();
+        this.urlImage = UrlHostUtil.getHostUrl() + this.id; // TODO
 
         return this;
     }
