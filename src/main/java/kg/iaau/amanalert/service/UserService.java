@@ -18,4 +18,6 @@ public interface UserService {
     public Optional<User> getUserByUsernameAndIsActive(String username, Boolean isActive);
 
     String encodePassword(String password);
+
+    byte[] getImageById(Long userId);
 }

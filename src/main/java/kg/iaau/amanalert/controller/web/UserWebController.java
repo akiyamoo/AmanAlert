@@ -10,14 +10,12 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -33,7 +31,7 @@ public class UserWebController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/save")
     public ResponseEntity<?> registerUser(@RequestParam("data") String json, @RequestParam("image") MultipartFile image) {
-        grantService.hasAny(Role.WEB_USER, Role.ADMIN);
+        grantService.hasAny(Role.ADMIN);
 
         try {
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
@@ -52,5 +50,10 @@ public class UserWebController {
             log.error("registerUser(): {}", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    @GetMapping(value = "/avatar/{userId}", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] getAvatar(@PathVariable Long userId) {
+        return userEndPoint.getImageById(userId);
     }
 }

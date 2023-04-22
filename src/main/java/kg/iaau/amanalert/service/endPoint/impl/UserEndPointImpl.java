@@ -130,6 +130,11 @@ public class UserEndPointImpl implements UserEndPoint {
         return userService.createUser(model, imageResource);
     }
 
+    @Override
+    public byte[] getImageById(Long userId) {
+        return userService.getImageById(userId);
+    }
+
     private String codeActivateMessage(String code) {
         return String.format("Account activation code: %s", code);
     }

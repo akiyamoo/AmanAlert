@@ -14,4 +14,6 @@ public interface UserEndPoint {
     UserMobileSignInModel confirmUser(UserMobileConfirmModel model) throws UserRegisterException;
 
     UserModel createWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException;
+
+    byte[] getImageById(Long userId);
 }

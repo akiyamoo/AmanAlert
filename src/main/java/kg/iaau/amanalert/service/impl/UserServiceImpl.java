@@ -54,4 +54,9 @@ public class UserServiceImpl implements UserService {
     public String encodePassword(String password) {
         return encoder.encode(password);
     }
+
+    @Override
+    public byte[] getImageById(Long userId) {
+        return repository.findById(userId).orElse(new User()).getImage();
+    }
 }
