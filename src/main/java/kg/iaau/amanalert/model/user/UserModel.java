@@ -34,7 +34,7 @@ public class UserModel implements BaseModelTo<User> {
         this.birthDate = user.getBirthDate();
         this.name = user.getName();
         this.email = user.getEmail();
-        this.urlImage = UrlHostUtil.getHostUrl() + this.id; // TODO
+        this.urlImage = UrlHostUtil.getHostUrl() + UrlHostUtil.getAvatarUrl() + this.id;
 
         return this;
     }

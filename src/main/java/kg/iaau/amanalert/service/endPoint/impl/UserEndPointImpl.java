@@ -4,14 +4,12 @@ import com.google.gson.Gson;
 import kg.iaau.amanalert.entity.User;
 import kg.iaau.amanalert.enums.Role;
 import kg.iaau.amanalert.exception.UserRegisterException;
-import kg.iaau.amanalert.model.user.UserMobileConfirmModel;
-import kg.iaau.amanalert.model.user.UserMobileSignInModel;
-import kg.iaau.amanalert.model.user.UserModel;
-import kg.iaau.amanalert.model.user.UserRegisterModel;
+import kg.iaau.amanalert.model.user.*;
 import kg.iaau.amanalert.service.AuthService;
 import kg.iaau.amanalert.service.SmsSenderService;
 import kg.iaau.amanalert.service.UserService;
 import kg.iaau.amanalert.service.endPoint.UserEndPoint;
+import kg.iaau.amanalert.util.UrlHostUtil;
 import kg.iaau.amanalert.util.UserValidateUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
+import org.webjars.NotFoundException;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -133,6 +134,30 @@ public class UserEndPointImpl implements UserEndPoint {
     @Override
     public byte[] getImageById(Long userId) {
         return userService.getImageById(userId);
+    }
+
+    @Override
+    public UserModel editMobileUser(UserMobileEditModel editModel) {
+        User user = userService.getUserByUsername(editModel.getUsername()).orElseThrow(
+                () -> new NotFoundException("User not found!")
+        );
+
+        user.setEmail(editModel.getEmail());
+        user.setName(editModel.getName());
+        user.setBirthDate(editModel.getBirthDate());
+
+        return new UserModel().toModel(userService.save(user));
+    }
+
+    @Override
+    public String editImageByUsername(String username, MultipartFile image) throws IOException {
+        User user = userService.getUserByUsername(username).orElseThrow(
+                () -> new NotFoundException("User not found!")
+        );
+        user.setImage(image.getBytes());
+        user = userService.save(user);
+
+        return UrlHostUtil.getHostUrl() + UrlHostUtil.getAvatarUrl() + user.getId();
     }
 
     private String codeActivateMessage(String code) {

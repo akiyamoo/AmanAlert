@@ -8,14 +8,20 @@ public class UrlHostUtil {
     private static final String HOST_NAME;
 
     private static final String NEWS_IMAGE_URL;
+    private static final String AVATAR_IMAGE_URL;
 
     static {
         HOST_NAME = "http://localhost:3003";
         NEWS_IMAGE_URL = "/api/news/image/";
+        AVATAR_IMAGE_URL = "/api/user/avatar/";
     }
 
     public static String getHostUrl() {
         return HOST_NAME;
+    }
+
+    public static String getAvatarUrl() {
+        return AVATAR_IMAGE_URL;
     }
 
     public static String getUrlNewsImage() {

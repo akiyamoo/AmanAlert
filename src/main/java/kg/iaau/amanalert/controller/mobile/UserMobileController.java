@@ -1,6 +1,7 @@
 package kg.iaau.amanalert.controller.mobile;
 
 import kg.iaau.amanalert.model.user.UserMobileConfirmModel;
+import kg.iaau.amanalert.model.user.UserMobileEditModel;
 import kg.iaau.amanalert.service.GrantService;
 import kg.iaau.amanalert.service.endPoint.UserEndPoint;
 import lombok.AccessLevel;
@@ -9,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,10 +51,18 @@ public class UserMobileController {
     }
 
     @PostMapping("/edit")
-    public ResponseEntity<?> editUser(@RequestBody UserMobileConfirmModel editModel) {
-        // TODO
+    public ResponseEntity<?> editUser(@RequestBody UserMobileEditModel editModel) {
         try {
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(userEndPoint.editMobileUser(editModel));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/edit-avatar/{username}")
+    public ResponseEntity<?> editAvatar(@PathVariable String username, @RequestParam("image") MultipartFile image) {
+        try {
+            return ResponseEntity.ok(userEndPoint.editImageByUsername(username, image));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
