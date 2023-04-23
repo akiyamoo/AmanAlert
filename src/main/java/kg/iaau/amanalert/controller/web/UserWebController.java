@@ -95,6 +95,13 @@ public class UserWebController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
+        grantService.hasAny(Role.ADMIN);
+        return ResponseEntity.ok(userEndPoint.deleteUserById(id));
+    }
+
     @GetMapping(value = "/avatar/{userId}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getAvatar(@PathVariable Long userId) {
         return userEndPoint.getImageById(userId);

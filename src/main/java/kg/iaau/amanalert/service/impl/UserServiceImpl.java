@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -72,5 +73,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllByRole(Role role) {
         return repository.findAllByRoleAndDeletedIsNull(role);
+    }
+
+    @Override
+    public User findUserById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
     }
 }

@@ -25,4 +25,6 @@ public interface UserService {
     UserModel editUser(User user, boolean isEditPassword);
 
     List<User> getAllByRole(Role webUser);
+
+    User findUserById(Long id);
 }

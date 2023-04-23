@@ -33,4 +33,6 @@ public interface UserEndPoint {
     UserModel getUserByUsername(String username);
 
     List<UserModel> getAllMobileUsers();
+
+    String deleteUserById(Long id);
 }

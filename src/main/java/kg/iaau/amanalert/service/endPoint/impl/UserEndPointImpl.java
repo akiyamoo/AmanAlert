@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -237,6 +238,15 @@ public class UserEndPointImpl implements UserEndPoint {
                 .stream()
                 .map(u -> new UserModel().toModel(u))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String deleteUserById(Long id) {
+        User user = userService.findUserById(id);
+        user.setDeleted(new Date());
+        userService.save(user);
+
+        return "User deleted!";
     }
 
     private String codeActivateMessage(String code) {
