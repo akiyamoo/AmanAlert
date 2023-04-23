@@ -65,6 +65,7 @@ public class UserMobileController {
     @PostMapping("/edit-avatar/{username}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> editAvatar(@PathVariable String username, @RequestParam("image") MultipartFile image) {
+        grantService.hasAny(Role.MOBILE_USER);
         try {
             return ResponseEntity.ok(userEndPoint.editImageByUsername(username, image));
         } catch (Exception e) {
