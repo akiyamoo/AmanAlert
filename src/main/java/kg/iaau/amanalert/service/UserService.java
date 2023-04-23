@@ -20,4 +20,5 @@ public interface UserService {
     String encodePassword(String password);
 
     byte[] getImageById(Long userId);
+    UserModel editUser(User user, boolean isEditPassword);
 }

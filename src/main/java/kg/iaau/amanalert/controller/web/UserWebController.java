@@ -29,7 +29,7 @@ public class UserWebController {
     GrantService grantService;
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/save")
+    @PostMapping("/create")
     public ResponseEntity<?> registerUser(@RequestParam("data") String json, @RequestParam("image") MultipartFile image) {
         grantService.hasAny(Role.ADMIN);
 
@@ -43,6 +43,30 @@ public class UserWebController {
                 }
             });
             return ResponseEntity.ok(userEndPoint.createWebUser(formData));
+        } catch (UserRegisterException e) {
+            log.warn("registerUser(): {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            log.error("registerUser(): {}", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/edit")
+    public ResponseEntity<?> editUser(@RequestParam("data") String json, @RequestParam("image") MultipartFile image) {
+        grantService.hasAny(Role.ADMIN);
+
+        try {
+            MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
+            formData.add("data", json);
+            formData.add("image", new ByteArrayResource(image.getBytes()) {
+                @Override
+                public String getFilename() {
+                    return image.getOriginalFilename();
+                }
+            });
+            return ResponseEntity.ok(userEndPoint.editWebUser(formData));
         } catch (UserRegisterException e) {
             log.warn("registerUser(): {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

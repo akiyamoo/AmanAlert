@@ -1,5 +1,6 @@
 package kg.iaau.amanalert.controller.mobile;
 
+import kg.iaau.amanalert.enums.Role;
 import kg.iaau.amanalert.model.user.UserMobileConfirmModel;
 import kg.iaau.amanalert.model.user.UserMobileEditModel;
 import kg.iaau.amanalert.service.GrantService;
@@ -52,6 +53,7 @@ public class UserMobileController {
 
     @PostMapping("/edit")
     public ResponseEntity<?> editUser(@RequestBody UserMobileEditModel editModel) {
+        grantService.hasAny(Role.MOBILE_USER);
         try {
             return ResponseEntity.ok(userEndPoint.editMobileUser(editModel));
         } catch (Exception e) {

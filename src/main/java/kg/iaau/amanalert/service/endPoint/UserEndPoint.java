@@ -24,4 +24,6 @@ public interface UserEndPoint {
     UserModel editMobileUser(UserMobileEditModel editModel) throws UserRegisterException;
 
     String editImageByUsername(String username, MultipartFile image) throws IOException;
+
+    UserModel editWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException;
 }

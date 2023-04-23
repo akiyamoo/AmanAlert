@@ -16,12 +16,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -137,10 +140,17 @@ public class UserEndPointImpl implements UserEndPoint {
     }
 
     @Override
-    public UserModel editMobileUser(UserMobileEditModel editModel) {
+    public UserModel editMobileUser(UserMobileEditModel editModel) throws UserRegisterException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.getUserByUsername((String) authentication.getPrincipal()).orElse(new User());
+
         User user = userService.getUserByUsername(editModel.getUsername()).orElseThrow(
                 () -> new NotFoundException("User not found!")
         );
+
+        if (!Objects.equals(user.getId(), currentUser.getId())) {
+            throw new UserRegisterException("It is impossible to edit another user!");
+        }
 
         user.setEmail(editModel.getEmail());
         user.setName(editModel.getName());
@@ -158,6 +168,41 @@ public class UserEndPointImpl implements UserEndPoint {
         user = userService.save(user);
 
         return UrlHostUtil.getHostUrl() + UrlHostUtil.getAvatarUrl() + user.getId();
+    }
+
+    @Override
+    public UserModel editWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException {
+        UserWebEditModel model = gson.fromJson((String) formData.getFirst("data"), UserWebEditModel.class);
+        ByteArrayResource imageResource = (ByteArrayResource) formData.getFirst("image");
+
+        boolean isEditPassword = model.getPassword() != null;
+
+
+        User user = userService.getUserByUsername(model.getUsername()).orElseThrow(
+                () -> new UserRegisterException("User not found!")
+        );
+
+        if (isEditPassword) log.info("Edit password: id: {}, password: {}", user.getId(), model.getPassword());
+
+        if (Role.WEB_USER != model.getRole()) {
+            throw new UserRegisterException("It is only possible to edit a user with the role WEB_USER!");
+        }
+        if (model.getBirthDate() == null) {
+            throw new UserRegisterException("The date of birth is not filled in!");
+        }
+
+        UserValidateUtil.validatePhone(model.getPhone());
+        //UserValidateUtil.validateEmail(model.getEmail());
+        UserValidateUtil.validatePassword(model.getPassword());
+        UserValidateUtil.validateUsername(model.getUsername());
+
+        user.setPhone(model.getPhone());
+        user.setPassword(isEditPassword ? model.getPassword() : user.getPassword());
+        user.setEmail(model.getEmail());
+        user.setBirthDate(model.getBirthDate());
+        user.setImage(imageResource.getByteArray());
+
+        return userService.editUser(user, isEditPassword);
     }
 
     private String codeActivateMessage(String code) {

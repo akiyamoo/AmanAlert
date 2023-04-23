@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> getUserByUsername(String username) {
-        return repository.findByUsername(username);
+        return repository.findByUsernameAndDeletedIsNull(username);
     }
 
     @Override
@@ -58,5 +58,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public byte[] getImageById(Long userId) {
         return repository.findById(userId).orElse(new User()).getImage();
+    }
+
+    @Override
+    public UserModel editUser(User user, boolean isEditPassword) {
+        if (isEditPassword) user.setPassword(encodePassword(user.getPassword()));
+
+        return new UserModel().toModel(save(user));
     }
 }
