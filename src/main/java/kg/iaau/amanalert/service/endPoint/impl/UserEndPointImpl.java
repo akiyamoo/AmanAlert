@@ -24,10 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -160,10 +162,18 @@ public class UserEndPointImpl implements UserEndPoint {
     }
 
     @Override
-    public String editImageByUsername(String username, MultipartFile image) throws IOException {
+    public String editImageByUsername(String username, MultipartFile image) throws IOException, UserRegisterException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.getUserByUsername((String) authentication.getPrincipal()).orElse(new User());
+
         User user = userService.getUserByUsername(username).orElseThrow(
                 () -> new NotFoundException("User not found!")
         );
+
+        if (!Objects.equals(user.getId(), currentUser.getId())) {
+            throw new UserRegisterException("It is impossible to edit another user!");
+        }
+
         user.setImage(image.getBytes());
         user = userService.save(user);
 
@@ -203,6 +213,30 @@ public class UserEndPointImpl implements UserEndPoint {
         user.setImage(imageResource.getByteArray());
 
         return userService.editUser(user, isEditPassword);
+    }
+
+    @Override
+    public List<UserModel> getAllWebUsers() {
+        return userService.getAllByRole(Role.WEB_USER)
+                .stream()
+                .map(u -> new UserModel().toModel(u))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserModel getUserByUsername(String username) {
+        return new UserModel().toModel(
+                userService.getUserByUsername(username)
+                        .orElseThrow(() -> new NotFoundException("User not found!"))
+        );
+    }
+
+    @Override
+    public List<UserModel> getAllMobileUsers() {
+        return userService.getAllByRole(Role.MOBILE_USER)
+                .stream()
+                .map(u -> new UserModel().toModel(u))
+                .collect(Collectors.toList());
     }
 
     private String codeActivateMessage(String code) {

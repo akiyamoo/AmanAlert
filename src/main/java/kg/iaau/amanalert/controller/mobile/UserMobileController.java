@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,11 +63,21 @@ public class UserMobileController {
     }
 
     @PostMapping("/edit-avatar/{username}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> editAvatar(@PathVariable String username, @RequestParam("image") MultipartFile image) {
         try {
             return ResponseEntity.ok(userEndPoint.editImageByUsername(username, image));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<?> getAllMobileUsers() {
+        try {
+            return ResponseEntity.ok(userEndPoint.getAllMobileUsers());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

@@ -1,11 +1,13 @@
 package kg.iaau.amanalert.service;
 
 import kg.iaau.amanalert.entity.User;
+import kg.iaau.amanalert.enums.Role;
 import kg.iaau.amanalert.exception.UserRegisterException;
 import kg.iaau.amanalert.model.user.UserModel;
 import kg.iaau.amanalert.model.user.UserRegisterModel;
 import org.springframework.core.io.ByteArrayResource;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -21,4 +23,6 @@ public interface UserService {
 
     byte[] getImageById(Long userId);
     UserModel editUser(User user, boolean isEditPassword);
+
+    List<User> getAllByRole(Role webUser);
 }

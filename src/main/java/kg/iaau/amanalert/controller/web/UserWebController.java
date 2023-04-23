@@ -28,6 +28,25 @@ public class UserWebController {
     UserEndPoint userEndPoint;
     GrantService grantService;
 
+    @GetMapping("/get-all-web")
+    public ResponseEntity<?> getAllWebUsers() {
+        grantService.hasAny(Role.ADMIN);
+        try {
+            return ResponseEntity.ok(userEndPoint.getAllWebUsers());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/get-user/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
+        try {
+            return ResponseEntity.ok(userEndPoint.getUserByUsername(username));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public ResponseEntity<?> registerUser(@RequestParam("data") String json, @RequestParam("image") MultipartFile image) {

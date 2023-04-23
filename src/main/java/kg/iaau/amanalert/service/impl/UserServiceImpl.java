@@ -1,6 +1,7 @@
 package kg.iaau.amanalert.service.impl;
 
 import kg.iaau.amanalert.entity.User;
+import kg.iaau.amanalert.enums.Role;
 import kg.iaau.amanalert.model.user.UserModel;
 import kg.iaau.amanalert.model.user.UserRegisterModel;
 import kg.iaau.amanalert.repo.UserRepository;
@@ -13,6 +14,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -65,5 +67,10 @@ public class UserServiceImpl implements UserService {
         if (isEditPassword) user.setPassword(encodePassword(user.getPassword()));
 
         return new UserModel().toModel(save(user));
+    }
+
+    @Override
+    public List<User> getAllByRole(Role role) {
+        return repository.findAllByRoleAndDeletedIsNull(role);
     }
 }

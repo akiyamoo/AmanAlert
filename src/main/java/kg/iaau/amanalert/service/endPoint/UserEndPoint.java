@@ -9,6 +9,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface UserEndPoint {
     String signInOrRegisterMobileUser(String phoneNumber) throws UserRegisterException;
@@ -23,7 +24,13 @@ public interface UserEndPoint {
 
     UserModel editMobileUser(UserMobileEditModel editModel) throws UserRegisterException;
 
-    String editImageByUsername(String username, MultipartFile image) throws IOException;
+    String editImageByUsername(String username, MultipartFile image) throws IOException, UserRegisterException;
 
     UserModel editWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException;
+
+    List<UserModel> getAllWebUsers();
+
+    UserModel getUserByUsername(String username);
+
+    List<UserModel> getAllMobileUsers();
 }
