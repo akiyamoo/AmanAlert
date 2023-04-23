@@ -1,6 +1,7 @@
 package kg.iaau.amanalert.service.impl;
 
 import kg.iaau.amanalert.entity.User;
+import kg.iaau.amanalert.enums.Role;
 import kg.iaau.amanalert.model.user.UserModel;
 import kg.iaau.amanalert.model.user.UserRegisterModel;
 import kg.iaau.amanalert.repo.UserRepository;
@@ -9,9 +10,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,15 +37,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserModel createUser(UserRegisterModel registerModel) {
+    public UserModel createUser(UserRegisterModel registerModel, ByteArrayResource imageResource) {
         registerModel.setPassword(encoder.encode(registerModel.getPassword()));
 
-        return new UserModel().toModel(save(registerModel.ToEntity()));
+        return new UserModel().toModel(save(registerModel.ToEntity().updateImage(imageResource.getByteArray())));
     }
 
     @Override
     public Optional<User> getUserByUsername(String username) {
-        return repository.findByUsername(username);
+        return repository.findByUsernameAndDeletedIsNull(username);
     }
 
     @Override
@@ -52,5 +56,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public String encodePassword(String password) {
         return encoder.encode(password);
+    }
+
+    @Override
+    public byte[] getImageById(Long userId) {
+        return repository.findById(userId).orElse(new User()).getImage();
+    }
+
+    @Override
+    public UserModel editUser(User user, boolean isEditPassword) {
+        if (isEditPassword) user.setPassword(encodePassword(user.getPassword()));
+
+        return new UserModel().toModel(save(user));
+    }
+
+    @Override
+    public List<User> getAllByRole(Role role) {
+        return repository.findAllByRoleAndDeletedIsNull(role);
+    }
+
+    @Override
+    public User findUserById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
     }
 }

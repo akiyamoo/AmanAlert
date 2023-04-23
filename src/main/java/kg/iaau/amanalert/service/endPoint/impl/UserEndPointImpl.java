@@ -1,24 +1,36 @@
 package kg.iaau.amanalert.service.endPoint.impl;
 
+import com.google.gson.Gson;
 import kg.iaau.amanalert.entity.User;
 import kg.iaau.amanalert.enums.Role;
 import kg.iaau.amanalert.exception.UserRegisterException;
-import kg.iaau.amanalert.model.user.UserMobileConfirmModel;
-import kg.iaau.amanalert.model.user.UserMobileSignInModel;
+import kg.iaau.amanalert.model.user.*;
 import kg.iaau.amanalert.service.AuthService;
 import kg.iaau.amanalert.service.SmsSenderService;
 import kg.iaau.amanalert.service.UserService;
 import kg.iaau.amanalert.service.endPoint.UserEndPoint;
+import kg.iaau.amanalert.util.UrlHostUtil;
 import kg.iaau.amanalert.util.UserValidateUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
+import org.webjars.NotFoundException;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +41,7 @@ public class UserEndPointImpl implements UserEndPoint {
     SmsSenderService smsSenderService;
     AuthService authService;
     Random random = new Random();
+    Gson gson = new Gson();
 
     @Override
     public String signInOrRegisterMobileUser(String phoneNumber) throws UserRegisterException {
@@ -99,6 +112,141 @@ public class UserEndPointImpl implements UserEndPoint {
                 .token(authService.generateToken(user))
                 .password(password)
                 .build();
+    }
+
+    @Override
+    public UserModel createWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException {
+        UserRegisterModel model = gson.fromJson((String) formData.getFirst("data"), UserRegisterModel.class);
+        ByteArrayResource imageResource = (ByteArrayResource) formData.getFirst("image");
+
+        if (userService.getUserByUsername(model.getUsername()).isPresent()) {
+            throw new UserRegisterException("Such a username already exists!");
+        }
+        if (Role.WEB_USER != model.getRole()) {
+            throw new UserRegisterException("It is only possible to create a user with the role WEB_USER!");
+        }
+        if (model.getBirthDate() == null) {
+            throw new UserRegisterException("The date of birth is not filled in!");
+        }
+
+        UserValidateUtil.validatePhone(model.getPhone());
+        //UserValidateUtil.validateEmail(model.getEmail());
+        UserValidateUtil.validatePassword(model.getPassword());
+        UserValidateUtil.validateUsername(model.getUsername());
+
+        return userService.createUser(model, imageResource);
+    }
+
+    @Override
+    public byte[] getImageById(Long userId) {
+        return userService.getImageById(userId);
+    }
+
+    @Override
+    public UserModel editMobileUser(UserMobileEditModel editModel) throws UserRegisterException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.getUserByUsername((String) authentication.getPrincipal()).orElse(new User());
+
+        User user = userService.getUserByUsername(editModel.getUsername()).orElseThrow(
+                () -> new NotFoundException("User not found!")
+        );
+
+        if (!Objects.equals(user.getId(), currentUser.getId())) {
+            throw new UserRegisterException("It is impossible to edit another user!");
+        }
+
+        user.setEmail(editModel.getEmail());
+        user.setName(editModel.getName());
+        user.setBirthDate(editModel.getBirthDate());
+
+        return new UserModel().toModel(userService.save(user));
+    }
+
+    @Override
+    public String editImageByUsername(String username, MultipartFile image) throws IOException, UserRegisterException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.getUserByUsername((String) authentication.getPrincipal()).orElse(new User());
+
+        User user = userService.getUserByUsername(username).orElseThrow(
+                () -> new NotFoundException("User not found!")
+        );
+
+        if (!Objects.equals(user.getId(), currentUser.getId())) {
+            throw new UserRegisterException("It is impossible to edit another user!");
+        }
+
+        user.setImage(image.getBytes());
+        user = userService.save(user);
+
+        return UrlHostUtil.getHostUrl() + UrlHostUtil.getAvatarUrl() + user.getId();
+    }
+
+    @Override
+    public UserModel editWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException {
+        UserWebEditModel model = gson.fromJson((String) formData.getFirst("data"), UserWebEditModel.class);
+        ByteArrayResource imageResource = (ByteArrayResource) formData.getFirst("image");
+
+        boolean isEditPassword = model.getPassword() != null;
+
+
+        User user = userService.getUserByUsername(model.getUsername()).orElseThrow(
+                () -> new UserRegisterException("User not found!")
+        );
+
+        if (isEditPassword) log.info("Edit password: id: {}, password: {}", user.getId(), model.getPassword());
+
+        if (Role.WEB_USER != model.getRole()) {
+            throw new UserRegisterException("It is only possible to edit a user with the role WEB_USER!");
+        }
+        if (model.getBirthDate() == null) {
+            throw new UserRegisterException("The date of birth is not filled in!");
+        }
+
+        UserValidateUtil.validatePhone(model.getPhone());
+        //UserValidateUtil.validateEmail(model.getEmail());
+        UserValidateUtil.validatePassword(model.getPassword());
+        UserValidateUtil.validateUsername(model.getUsername());
+
+        user.setPhone(model.getPhone());
+        user.setPassword(isEditPassword ? model.getPassword() : user.getPassword());
+        user.setEmail(model.getEmail());
+        user.setBirthDate(model.getBirthDate());
+        user.setImage(imageResource.getByteArray());
+
+        return userService.editUser(user, isEditPassword);
+    }
+
+    @Override
+    public List<UserModel> getAllWebUsers() {
+        return userService.getAllByRole(Role.WEB_USER)
+                .stream()
+                .map(u -> new UserModel().toModel(u))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserModel getUserByUsername(String username) {
+        return new UserModel().toModel(
+                userService.getUserByUsername(username)
+                        .orElseThrow(() -> new NotFoundException("User not found!"))
+        );
+    }
+
+    @Override
+    public List<UserModel> getAllMobileUsers() {
+        return userService.getAllByRole(Role.MOBILE_USER)
+                .stream()
+                .map(u -> new UserModel().toModel(u))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String deleteUserById(Long id) {
+        User user = userService.findUserById(id);
+        user.setDeleted(new Date());
+        userService.save(user);
+
+        return "User deleted!";
     }
 
     private String codeActivateMessage(String code) {

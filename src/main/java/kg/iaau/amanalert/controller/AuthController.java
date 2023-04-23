@@ -19,7 +19,6 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestModel loginRequest) throws AuthenticationException {
-        // TODO
         return ResponseEntity.ok(authService.authorize(loginRequest));
     }
 }
