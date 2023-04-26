@@ -249,6 +249,12 @@ public class UserEndPointImpl implements UserEndPoint {
         return "User deleted!";
     }
 
+    @Override
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userService.getUserByUsername((String) authentication.getPrincipal()).orElse(new User());
+    }
+
     private String codeActivateMessage(String code) {
         return String.format("Account activation code: %s", code);
     }

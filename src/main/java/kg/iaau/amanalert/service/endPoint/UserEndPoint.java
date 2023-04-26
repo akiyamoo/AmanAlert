@@ -1,5 +1,6 @@
 package kg.iaau.amanalert.service.endPoint;
 
+import kg.iaau.amanalert.entity.User;
 import kg.iaau.amanalert.exception.UserRegisterException;
 import kg.iaau.amanalert.model.user.UserMobileConfirmModel;
 import kg.iaau.amanalert.model.user.UserMobileEditModel;
@@ -35,4 +36,5 @@ public interface UserEndPoint {
     List<UserModel> getAllMobileUsers();
 
     String deleteUserById(Long id);
+    User getCurrentUser();
 }
