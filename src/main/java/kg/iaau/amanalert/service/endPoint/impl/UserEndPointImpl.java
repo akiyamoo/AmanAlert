@@ -68,10 +68,14 @@ public class UserEndPointImpl implements UserEndPoint {
         user = userService.save(user);
         String code = user.getActivateCode();
 
-        CompletableFuture.supplyAsync(
-                () -> smsSenderService.sendMessage(phone, codeActivateMessage(code)),
-                CompletableFuture.delayedExecutor(500L, TimeUnit.MILLISECONDS)
-        );
+        try {
+            CompletableFuture.supplyAsync(
+                    () -> smsSenderService.sendMessage(phone, codeActivateMessage(code)),
+                    CompletableFuture.delayedExecutor(500L, TimeUnit.MILLISECONDS)
+            );
+        } catch (Exception e) {
+            log.error("{}", e);
+        }
 
         return "Send SMS successfully!";
     }
@@ -84,10 +88,14 @@ public class UserEndPointImpl implements UserEndPoint {
         user.setActivateCode(getCode());
         userService.save(user);
 
-        CompletableFuture.supplyAsync(
-                () -> smsSenderService.sendMessage("+" + phoneNumber, codeActivateMessage(user.getActivateCode())),
-                CompletableFuture.delayedExecutor(500L, TimeUnit.MILLISECONDS)
-        );
+        try {
+            CompletableFuture.supplyAsync(
+                    () -> smsSenderService.sendMessage("+" + phoneNumber, codeActivateMessage(user.getActivateCode())),
+                    CompletableFuture.delayedExecutor(500L, TimeUnit.MILLISECONDS)
+            );
+        } catch (Exception e) {
+            log.error("{}", e);
+        }
         return "Resend SMS successfully! Code: " + user.getActivateCode();
     }
 

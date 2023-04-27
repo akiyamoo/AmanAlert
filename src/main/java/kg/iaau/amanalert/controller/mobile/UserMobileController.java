@@ -34,7 +34,7 @@ public class UserMobileController {
     }
 
     @GetMapping("/sign-in/resend-sms")
-    public ResponseEntity<?> resendMessage(@RequestBody String phoneNumber) {
+    public ResponseEntity<?> resendMessage(@RequestParam String phoneNumber) {
         //grantService.hasAny(Role.MOBILE_USER);
         try {
             return ResponseEntity.ok(userEndPoint.resendMessage(phoneNumber));
