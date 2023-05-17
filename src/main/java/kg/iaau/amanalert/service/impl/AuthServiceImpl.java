@@ -50,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
                     .build();
         } catch (Exception e) {
             log.info("ex: {}", e);
-            return null;
+            throw e;
         }
     }
 
