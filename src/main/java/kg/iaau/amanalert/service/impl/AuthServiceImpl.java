@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
 
             User user = userService.getUserByUsername(requestModel.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Нету такого пользователя!"));
 
-            if (!userService.isCorrectPassword(requestModel.getPassword(), user.getPassword())) throw new AuthenticationException("Wrong password!");
+            if (!userService.isCorrectPassword(requestModel.getPassword(), user.getPassword())) throw new UsernameNotFoundException("Wrong password!");
 
             String jwt = generateToken(user);
 
