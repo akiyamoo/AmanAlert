@@ -59,6 +59,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isCorrectPassword(String password, String encode) {
+        return encoder.matches(password, encode);
+    }
+
+    @Override
     public byte[] getImageById(Long userId) {
         return repository.findById(userId).orElse(new User()).getImage();
     }
