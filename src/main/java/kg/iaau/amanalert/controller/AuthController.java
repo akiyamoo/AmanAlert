@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kg.iaau.amanalert.model.ResponseMessage;
 import kg.iaau.amanalert.model.auth.AuthModel;
 import kg.iaau.amanalert.model.auth.LoginRequestModel;
 import kg.iaau.amanalert.service.AuthService;
@@ -32,11 +33,11 @@ public class AuthController {
     @ApiResponse(responseCode = "401", description = "Fail")
     @ApiResponse(responseCode = "403", description = "Fail")
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestModel loginRequest) throws AuthenticationException {
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestModel loginRequest) {
         try {
             return ResponseEntity.ok(authService.authorize(loginRequest));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return new ResponseEntity<>(ResponseMessage.builder().message(e.getMessage()).build(), HttpStatus.UNAUTHORIZED);
         }
     }
 }
