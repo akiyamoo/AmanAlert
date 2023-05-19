@@ -46,6 +46,12 @@ public class User extends BaseEntity {
 
     String email;
 
+    Integer experience;
+
+    String position;
+
+    String education;
+
     public User updateImage(byte[] image) {
         this.image = image;
 

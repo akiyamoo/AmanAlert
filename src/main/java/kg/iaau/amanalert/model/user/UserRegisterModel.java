@@ -18,9 +18,15 @@ public class UserRegisterModel implements BaseModelFrom<User> {
     String password;
     Role role;
     String phone;
-    Date birthDate;
+    Long birthDate;
     String name;
     String email;
+
+    Integer experience;
+
+    String position;
+
+    String education;
 
     @Override
     public User ToEntity() {
@@ -29,9 +35,12 @@ public class UserRegisterModel implements BaseModelFrom<User> {
                 .password(password)
                 .role(role)
                 .phone(phone)
-                .birthDate(birthDate)
+                .birthDate(new Date(birthDate))
                 .name(name)
                 .email(email)
+                .experience(experience)
+                .position(position)
+                .education(education)
                 .build();
     }
 }
