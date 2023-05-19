@@ -46,7 +46,7 @@ public class UserModel implements BaseModelTo<User> {
         if (user.getExperience() != null || user.getExperience() != 0) {
             if (user.getExperience() >= 2 && user.getExperience() <= 4) experience = " года";
             if (user.getExperience() > 4) experience = " лет";
-            this.experience = String.format("%s " + experience, user.getExperience());
+            this.experience = String.format("%s" + experience, user.getExperience());
         }
         else {
             this.experience = "";
