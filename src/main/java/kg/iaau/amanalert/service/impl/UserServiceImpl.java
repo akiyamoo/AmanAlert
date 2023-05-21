@@ -40,7 +40,9 @@ public class UserServiceImpl implements UserService {
     public UserModel createUser(UserRegisterModel registerModel, ByteArrayResource imageResource) {
         registerModel.setPassword(encoder.encode(registerModel.getPassword()));
 
-        return new UserModel().toModel(save(registerModel.ToEntity().updateImage(imageResource.getByteArray())));
+        return new UserModel().toModel(save(registerModel.ToEntity().updateImage(
+                imageResource == null ? null : imageResource.getByteArray()))
+        );
     }
 
     @Override
