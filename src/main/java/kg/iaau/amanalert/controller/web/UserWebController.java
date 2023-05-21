@@ -50,7 +50,7 @@ public class UserWebController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public ResponseEntity<?> registerUser(@RequestParam("data") String json, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<?> registerUser(@RequestParam("data") String json, @RequestParam(value = "image", required = false) MultipartFile image) {
         grantService.hasAny(Role.ADMIN);
 
         try {
