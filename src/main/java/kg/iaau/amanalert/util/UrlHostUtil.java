@@ -11,7 +11,7 @@ public class UrlHostUtil {
     private static final String AVATAR_IMAGE_URL;
 
     static {
-        HOST_NAME = "http://localhost:3003";
+        HOST_NAME = "https://aman-alert.herokuapp.com";
         NEWS_IMAGE_URL = "/api/news/image/";
         AVATAR_IMAGE_URL = "/api/user/avatar/";
     }
