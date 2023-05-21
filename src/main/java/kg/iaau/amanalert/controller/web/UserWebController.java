@@ -29,6 +29,7 @@ public class UserWebController {
     GrantService grantService;
 
     @GetMapping("/get-all-web")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getAllWebUsers() {
         grantService.hasAny(Role.ADMIN);
         try {
