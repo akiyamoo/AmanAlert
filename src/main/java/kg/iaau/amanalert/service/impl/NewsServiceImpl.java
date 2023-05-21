@@ -38,8 +38,8 @@ public class NewsServiceImpl implements NewsService {
                     .orElseThrow(
                             () -> new NotFoundException(String.format("News with id = %s not found", model.getId()))
                     );
-            news.setImage(imageResource.getByteArray().length == 0 ? news.getImage() : imageResource.getByteArray());
-            news.setImageName(imageResource.getFilename() == null ? news.getImageName() : imageResource.getFilename());
+            news.setImage(imageResource == null || imageResource.getByteArray().length == 0 ? news.getImage() : imageResource.getByteArray());
+            news.setImageName(imageResource == null || imageResource.getFilename() == null ? news.getImageName() : imageResource.getFilename());
             news.setTitle(model.getTitle());
             news.setDescription(model.getDescription());
         }
@@ -47,8 +47,8 @@ public class NewsServiceImpl implements NewsService {
             news = News.builder()
                     .description(model.getDescription())
                     .title(model.getTitle())
-                    .image(imageResource.getByteArray())
-                    .imageName(imageResource.getFilename())
+                    .image(imageResource == null ? null : imageResource.getByteArray())
+                    .imageName(imageResource == null ? null : imageResource.getFilename())
                     .build();
         }
 

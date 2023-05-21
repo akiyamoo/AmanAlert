@@ -47,12 +47,14 @@ public class NewsController {
         try {
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
             formData.add("data", json);
-            formData.add("image", new ByteArrayResource(image.getBytes()) {
-                @Override
-                public String getFilename() {
-                    return image.getOriginalFilename();
-                }
-            });
+            if (image != null) {
+                formData.add("image", new ByteArrayResource(image.getBytes()) {
+                    @Override
+                    public String getFilename() {
+                        return image.getOriginalFilename();
+                    }
+                });
+            }
 
             return ResponseEntity.ok(newsService.saveNews(formData));
         } catch (Exception e) {
