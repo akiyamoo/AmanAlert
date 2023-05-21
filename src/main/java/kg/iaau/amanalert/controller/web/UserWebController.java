@@ -82,12 +82,14 @@ public class UserWebController {
         try {
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
             formData.add("data", json);
-            formData.add("image", new ByteArrayResource(image.getBytes()) {
-                @Override
-                public String getFilename() {
-                    return image.getOriginalFilename();
-                }
-            });
+            if (image != null) {
+                formData.add("image", new ByteArrayResource(image.getBytes()) {
+                    @Override
+                    public String getFilename() {
+                        return image.getOriginalFilename();
+                    }
+                });
+            }
             return ResponseEntity.ok(userEndPoint.editWebUser(formData));
         } catch (UserRegisterException e) {
             log.warn("registerUser(): {}", e.getMessage());
