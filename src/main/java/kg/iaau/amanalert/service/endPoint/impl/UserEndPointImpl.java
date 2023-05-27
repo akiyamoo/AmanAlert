@@ -5,6 +5,7 @@ import kg.iaau.amanalert.entity.User;
 import kg.iaau.amanalert.enums.Role;
 import kg.iaau.amanalert.exception.UserRegisterException;
 import kg.iaau.amanalert.model.user.*;
+import kg.iaau.amanalert.security.details.UserDetailsImpl;
 import kg.iaau.amanalert.service.AuthService;
 import kg.iaau.amanalert.service.SmsSenderService;
 import kg.iaau.amanalert.service.UserService;
@@ -153,7 +154,7 @@ public class UserEndPointImpl implements UserEndPoint {
     @Override
     public UserModel editMobileUser(UserMobileEditModel editModel) throws UserRegisterException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = userService.getUserByUsername((String) authentication.getPrincipal()).orElse(new User());
+        User currentUser = userService.getUserByUsername(((UserDetailsImpl) authentication.getPrincipal()).getUsername()).orElse(new User());
 
         User user = userService.getUserByUsername(editModel.getUsername()).orElseThrow(
                 () -> new NotFoundException("User not found!")
@@ -173,7 +174,7 @@ public class UserEndPointImpl implements UserEndPoint {
     @Override
     public String editImageByUsername(String username, MultipartFile image) throws IOException, UserRegisterException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = userService.getUserByUsername((String) authentication.getPrincipal()).orElse(new User());
+        User currentUser = userService.getUserByUsername(((UserDetailsImpl) authentication.getPrincipal()).getUsername()).orElse(new User());
 
         User user = userService.getUserByUsername(username).orElseThrow(
                 () -> new NotFoundException("User not found!")
@@ -260,7 +261,7 @@ public class UserEndPointImpl implements UserEndPoint {
     @Override
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return userService.getUserByUsername((String) authentication.getPrincipal()).orElse(new User());
+        return userService.getUserByUsername(((UserDetailsImpl) authentication.getPrincipal()).getUsername()).orElse(new User());
     }
 
     private String codeActivateMessage(String code) {
