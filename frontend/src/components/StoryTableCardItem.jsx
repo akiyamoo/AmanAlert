@@ -55,7 +55,7 @@ const StoryTableTitleSmall = styled.p`
   padding: 10px;
 `;
 const token = localStorage.getItem('token');
-const role = JSON.parse(token).message
+const role = token == null ? null : JSON.parse(token).message
 
 const StoryTableCardItem = ({it,id, handleDeleteUser}) => {
     const [showModal, setShowModal] = useState(false)

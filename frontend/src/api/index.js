@@ -1,7 +1,7 @@
 const main_api = 'https://aman-alert.herokuapp.com/api'
 
 const token = localStorage.getItem('token');
-const role = JSON.parse(token).message
+const role = token == null ? null : JSON.parse(token).message
 
 const headers =  {
       'Accept': 'application/json',
