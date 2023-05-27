@@ -1,0 +1,10 @@
+export const LOGIN_REQUEST = "LOGIN_REQUEST";
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const NEWS_REQUEST = "NEWS_REQUEST";
+export const NEWS_SUCCESS = "NEWS_SUCCESS";
+export const OPEN_MODAL = "OPEN_MODAL";
+export const ADD_NEWS = "ADD_NEWS";
+export const REMOVE_NEWS = "REMOVE_NEWS";
+export const GET_ALL_USERS_REQUEST = "GET_ALL_USERS_REQUEST";
+export const GET_ALL_USERS_SUCCESS = "GET_ALL_USERS_SUCCESS";
+export const DELETE_USER = "DELETE_USER"
