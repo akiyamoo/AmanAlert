@@ -246,7 +246,17 @@ public class UserEndPointImpl implements UserEndPoint {
         user.setPhone(model.getPhone());
         user.setPassword(isEditPassword ? model.getPassword() : user.getPassword());
         user.setEmail(model.getEmail());
-        user.setBirthDate(new SimpleDateFormat("yyyy-MM-dd").parse(model.getBirthDate()));
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd").parse(model.getBirthDate());
+        } catch (Exception e) {
+            try {
+                date = new Date(Integer.parseInt(model.getBirthDate()));
+            } catch (Exception ex) {
+                log.info("{}", ex);
+            }
+        }
+        user.setBirthDate(date);
         user.setImage(imageResource == null ? user.getImage() : imageResource.getByteArray());
         user.setEducation(model.getEducation());
         user.setPosition(model.getPosition());
