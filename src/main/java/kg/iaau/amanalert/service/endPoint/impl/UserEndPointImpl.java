@@ -257,6 +257,7 @@ public class UserEndPointImpl implements UserEndPoint {
             }
         }
         user.setBirthDate(date);
+        user.setName(model.getName());
         user.setImage(imageResource == null ? user.getImage() : imageResource.getByteArray());
         user.setEducation(model.getEducation());
         user.setPosition(model.getPosition());
