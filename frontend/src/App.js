@@ -19,6 +19,7 @@ import NewsPage from "./views/NewsPage";
 import SettingPage from "./views/SettingsPage";
 import Modal from "./components/Modal";
 import {useSelector} from "react-redux";
+import ModalEdit from './components/ModalEditForm';
 
 const NavbarContainer = styled.div`
   display: flex;
@@ -61,14 +62,19 @@ function App() {
     const [activePath,setActivePath] = useState(window.location.pathname)
     const modal = useSelector(store => store.login)
 
-    // useEffect(() => {
-    //     if (!!window.location.pathname) setActivePath('/')
-    // },[window.location.pathname])
+    useEffect(() => {
+        if (window.location.pathname === '') {
+            setActivePath('/')
+        } else {
+            setActivePath(window.location.pathname)
+        }
+    },[window.location.pathname])
 
     return (
         <BrowserRouter>
             <NavBar/>
             <Modal show={modal?.modalStatus}></Modal>
+            <ModalEdit show={modal?.modalForm}></ModalEdit>
             <NavbarContainer>
                 <MenuContent>
                     <LinkContent>
@@ -80,7 +86,7 @@ function App() {
                             {activePath === '/story' ? <AnkeIConActive style={{margin: 0}}/> : <AnkeICon style={{margin: 0}}/>}
                             <MyLinkTitle>Анкеты</MyLinkTitle>
                         </MyLink>
-                        <MyLink to='/news' onClick={() => setActivePath('/login')} active={activePath === '/login'}>
+                        <MyLink to='/news' onClick={() => setActivePath('/login')} active={activePath === '/news'}>
                             {activePath === '/news' ? <NewsIconActive style={{margin: 0}}/> : <NewsIcon style={{margin: 0}}/>}
                             <MyLinkTitle>Новости</MyLinkTitle>
                         </MyLink>

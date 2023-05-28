@@ -10,6 +10,7 @@ import {
     removeNewsAction
 } from "../redux/actions/actionCreator";
 import {ReactComponent as More} from "../assets/more.svg";
+import News from "../components/News";
 
 const MainContainer = styled.div`
   width: 100%;
@@ -201,9 +202,12 @@ function StoryPage() {
     const openAdminButton = (id) => {
         setOpenAdminContoller(!openAdminContoller)
     }
+    const reload = () => {
+      window.location.reload()
+    }
     const removeNewsFunc = (id) => {
         dispatch(removeNewsAction(id))
-        window.location.reload()
+        setTimeout(reload, 1000);
     }
 
     const editNews = (id) => {
@@ -249,17 +253,7 @@ function StoryPage() {
                 <NewsCartContent>
                     {news?.news.map((item) => {
                         return (
-                            <NewsCart>
-                                <NewsCartPhotoContent>
-                                    {role === 'ADMIN' && <More onClick={() => openAdminButton(item.id)} style={{position: "absolute", bottom: "10px", right: "10px", width: "5px"}}/>}
-                                    <NewsCartPhoto src={item.urlImage}/>
-                                </NewsCartPhotoContent>
-                                <NewsCartTitle>{item.title}</NewsCartTitle>
-                                <NewsCartDescContent>
-                                    <NewsCartDesc>1 Hour Ago</NewsCartDesc>
-                                    <NewsCartDesc>Бишкек</NewsCartDesc>
-                                </NewsCartDescContent>
-                            </NewsCart>
+                           <News item={item} removeNewsFunc={removeNewsFunc} openAdminButton={openAdminButton} role={role} editNews={editNews}/>
                         )
                     })}
                 </NewsCartContent>

@@ -8,6 +8,7 @@ import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllUsersReq} from "../redux/actions/actionCreator";
 import StoryTableCardItem from "../components/StoryTableCardItem";
+import CreateUserModal from "../components/CreateUserModal";
 
 const MainContainer = styled.div`
   width: 100%;
@@ -96,17 +97,6 @@ const StoryContentTitleButton = styled.div`
   font-weight: bold;
   cursor: pointer;
 `;
-const data1 = [
-    {name : "Айнура1 Иманалиева",educ: "Доктор", spec: "Психолог", exp:"12 лет", phone:"+ 996 777 77 77 77"},
-    {name : "Айнура2 Иманалиева",educ: "extysq", spec: "trst", exp:"12 лет", phone:"+ 996 888 88 88 88"},
-    {name : "Айнура3 Иманалиева",educ: "qwerty", spec: "map", exp:"12 лет", phone:"+ 996 666 66 66 66"},
-    {name : "Айнура4 Иманалиева",educ: "Д123", spec: "3423423", exp:"12 лет", phone:"+ 996 555 55 55 55"},
-    {name : "Айнура5 Иманалиева",educ: "Доктор наук", spec: "fdsfdsf", exp:"12 лет", phone:"+ 996 444 44 44 44"},
-    {name : "Айнура6 Иманалиева",educ: "Доктор наук", spec: "czxcz", exp:"12 лет", phone:"+ 996 333 33 33 33"},
-    {name : "Айнура7 Иманалиева",educ: "Доктор наук", spec: "qwe", exp:"12 лет", phone:"+ 996 111 11 11 11"},
-    {name : "Айнура8 Иманалиева",educ: "Доктор наук", spec: "45qwer", exp:"12 лет", phone:"+ 996 222 22 22 22"},
-]
-
 
 function SettingPage() {
     const {users} = useSelector(store => store.login)
@@ -114,18 +104,19 @@ function SettingPage() {
     const [usersData, setUsersData] = useState(users)
     const dispatch = useDispatch()
     const navigate = useNavigate();
-
+    const [showUserCreateModal, setShowUserCreateModal] = useState(false)
+    const token = JSON.parse(localStorage.getItem('token'))?.message || ""
     useEffect(() => {
-        const token = JSON.parse(localStorage.getItem('token'))?.message
+        const token = JSON.parse(localStorage.getItem('token'))?.message || ""
         if (!token) {
             navigate('/login')
         }
         dispatch(getAllUsersReq())
     },[] )
-
+    console.log(token)
     const handleSearch = (str) => {
         const res = users ?? [];
-        setUsersData(res.filter(it => it.name.includes(str)));
+        token && usersData && setUsersData(res?.filter(it => it?.name?.includes(str)));
     };
 
     useEffect(() => {
@@ -135,12 +126,17 @@ function SettingPage() {
     const handleDeleteUser = (status, it) => {
         if (status) {
             setUsersData(usersData?.filter(el => el.id !== it.id))
-            console.log(usersData,"------")
+
         }
     }
+
     return (
         <MainContainer>
+            {
+                showUserCreateModal && <CreateUserModal show={showUserCreateModal} setShowModal={setShowUserCreateModal} />
+            }
             <StoryContent>
+
                 <StoryContentTitle>
                     Настройки
                 </StoryContentTitle>
@@ -149,7 +145,7 @@ function SettingPage() {
                     <SearchInputContent>
                         <SearchInput onChange={(e) => setSearchValue(e.target.value)} placeholder='Искать ФИО'/>
                     </SearchInputContent>
-                    <StoryContentTitleButton>
+                    <StoryContentTitleButton onClick={() => setShowUserCreateModal(true)}>
                         Добавить +
                     </StoryContentTitleButton>
                 </SearchContent>
@@ -167,7 +163,7 @@ function SettingPage() {
 
                 <div style={{marginTop: '10px'}}>
                     {
-                        usersData?.map((it,id) => {
+                        token && usersData && usersData?.map((it,id) => {
                             return(
                                 <StoryTableCardItem handleDeleteUser={handleDeleteUser} it={it} id={id}/>
                             )

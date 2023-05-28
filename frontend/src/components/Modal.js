@@ -123,7 +123,7 @@ function Modal({show}) {
         if (image && title && descr) {
             dispatch(addNewsAction(formData))
             setShowModal(false)
-            // window.location.reload()
+            window.location.reload()
         } else {
             setErroe(true)
         }

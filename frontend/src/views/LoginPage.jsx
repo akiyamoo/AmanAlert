@@ -96,7 +96,7 @@ function LoginPage() {
         if (userData?.authData.id) {
             localStorage.setItem('token', JSON.stringify(userData.authData))
             navigate('/')
-            // window.location.reload();
+            window.location.reload();
         } else if (userData.authData?.message) {
             setError(true)
         }

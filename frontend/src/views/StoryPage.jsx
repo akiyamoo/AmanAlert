@@ -5,6 +5,9 @@ import {ReactComponent as StarWhite} from "../assets/star.svg";
 import {ReactComponent as Trash} from "../assets/trash.svg";
 import {useNavigate} from "react-router-dom";
 import {getAllAnkets} from "../api";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteStory, getAllStoryAction, openForm } from "../redux/actions/actionCreator";
+import {ReactComponent as Edit} from "../assets/edit.svg";
 
 const MainContainer = styled.div`
   width: 100%;
@@ -121,6 +124,9 @@ const StoryTableCard = styled.div`
 
 function StoryPage() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const {storyUsers} = useSelector(store => store.login)
+    const role = JSON.parse(localStorage.getItem('token'))?.role
 
     useEffect(() => {
         const token = JSON.parse(localStorage.getItem('token'))?.username
@@ -130,6 +136,23 @@ function StoryPage() {
         }
     }, )
 
+    useEffect(() =>{
+      dispatch(getAllStoryAction())
+    },[])
+
+    const reload = () => {
+      window.location.reload()
+    }
+
+    const deleteHandler = (id) => {
+      dispatch(deleteStory(id))
+      setTimeout(reload, 1000);
+    }
+
+    const openEditModal = (item) => {
+      dispatch(openForm(item))
+    }
+
     return (
         <MainContainer>
             <StoryContent>
@@ -137,7 +160,6 @@ function StoryPage() {
                     Анкеты
                 </StoryContentTitle>
                 <StoryTableMain>
-                    <Star style={{width: "5%", margin: 0}}/>
                     <StoryTableTitle>ФИО пациента</StoryTableTitle>
                     <StoryTableTitle>Местонахождение</StoryTableTitle>
                     <StoryTableTitleSmall>Дата события</StoryTableTitleSmall>
@@ -145,66 +167,33 @@ function StoryPage() {
                     <StoryTableTitle>Ответ психолога</StoryTableTitle>
                 </StoryTableMain>
 
+
                 <div>
-                    <StoryTableCard>
-                        <StarWhite style={{width: "5%", margin: 0, cursor: "pointer"}}/>
+                {storyUsers?.map((item) => <StoryTableCard>
                         <StoryTableTitle>
                             <StoryTableName>
                                 <StoryTableNameImg src='https://pbs.twimg.com/profile_images/1356606198435438595/4Nad8CDb_400x400.jpg'/>
-                                <StoryTableNameTitle>Aman</StoryTableNameTitle>
+                                <StoryTableNameTitle>{item.name}</StoryTableNameTitle>
                             </StoryTableName>
-                            <StoryTableNameDescr>Эта ситуация произошла со мной
-                                год назад, мой муж поднимал на
-                                меня руку и иногда приходилось
+                            <StoryTableNameDescr>{item.eventDescription}
                             </StoryTableNameDescr>
                         </StoryTableTitle>
-                        <StoryTableTitle>Бишкек</StoryTableTitle>
-                        <StoryTableTitleSmall>23/09/2022</StoryTableTitleSmall>
-                        <StoryTableTitleSmall><StoryTableTitleSmallSuccess>Отправлено</StoryTableTitleSmallSuccess></StoryTableTitleSmall>
-                        <StoryTableTitle>Жаль что так случилось, надеюсь мои консультации помогут вам и так
-                            далее...</StoryTableTitle>
-                        <Trash style={{position: "absolute", margin: 0, top: "10px", right: "10px", cursor: "pointer"}}/>
-                    </StoryTableCard>
-
-                    <StoryTableCard>
-                        <StarWhite style={{width: "5%", margin: 0, cursor: "pointer"}}/>
-                        <StoryTableTitle>
-                            <StoryTableName>
-                                <StoryTableNameImg src='https://pbs.twimg.com/profile_images/1356606198435438595/4Nad8CDb_400x400.jpg'/>
-                                <StoryTableNameTitle>Sasha</StoryTableNameTitle>
-                            </StoryTableName>
-                            <StoryTableNameDescr>Эта ситуация произошла со мной
-                                год назад, мой муж поднимал на
-                                меня руку и иногда приходилось
-                            </StoryTableNameDescr>
-                        </StoryTableTitle>
-                        <StoryTableTitle>Бишкек</StoryTableTitle>
-                        <StoryTableTitleSmall>23/09/2022</StoryTableTitleSmall>
-                        <StoryTableTitleSmall><StoryTableTitleSmallProcess>В процессе</StoryTableTitleSmallProcess></StoryTableTitleSmall>
-                        <StoryTableTitle>Жаль что так случилось, надеюсь мои консультации помогут вам и так
-                            далее...</StoryTableTitle>
-                        <Trash style={{position: "absolute", margin: 0, top: "10px", right: "10px", cursor: "pointer"}}/>
-                    </StoryTableCard>
-
-                    <StoryTableCard>
-                        <StarWhite style={{width: "5%", margin: 0, cursor: "pointer"}}/>
-                        <StoryTableTitle>
-                            <StoryTableName>
-                                <StoryTableNameImg src='https://pbs.twimg.com/profile_images/1356606198435438595/4Nad8CDb_400x400.jpg'/>
-                                <StoryTableNameTitle>Arslan</StoryTableNameTitle>
-                            </StoryTableName>
-                            <StoryTableNameDescr>Эта ситуация произошла со мной
-                                год назад, мой муж поднимал на
-                                меня руку и иногда приходилось
-                            </StoryTableNameDescr>
-                        </StoryTableTitle>
-                        <StoryTableTitle>Бишкек</StoryTableTitle>
-                        <StoryTableTitleSmall>23/09/2022</StoryTableTitleSmall>
-                        <StoryTableTitleSmall><StoryTableTitleSmallNew>Новый</StoryTableTitleSmallNew></StoryTableTitleSmall>
-                        <StoryTableTitle>Жаль что так случилось, надеюсь мои консультации помогут вам и так
-                            далее...</StoryTableTitle>
-                        <Trash style={{position: "absolute", margin: 0, top: "10px", right: "10px", cursor: "pointer"}}/>
-                    </StoryTableCard>
+                        <StoryTableTitle>{item.eventLocation}</StoryTableTitle>
+                        <StoryTableTitleSmall>{item.eventTime}</StoryTableTitleSmall>
+                        <StoryTableTitleSmall>{
+                          item.answer ?
+                          <StoryTableTitleSmallSuccess>Отправлено</StoryTableTitleSmallSuccess>
+                        :
+                        <StoryTableTitleSmallNew>Новое</StoryTableTitleSmallNew>
+                        }
+                          </StoryTableTitleSmall>
+                        <StoryTableTitle>{item.answer}</StoryTableTitle>
+                        {role === 'ADMIN' &&
+                          <>
+                          <Trash onClick={() => deleteHandler(item.id)} style={{position: "absolute", margin: 0, top: "10px", right: "10px", cursor: "pointer"}}/>
+                          <Edit onClick={() => openEditModal(item)} style={{position: "absolute", margin: 0, top: "6px", right: "30px", cursor: "pointer", width:"20px"}}/>
+                          </>}
+                    </StoryTableCard>)}
                 </div>
             </StoryContent>
         </MainContainer>

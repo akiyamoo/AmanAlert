@@ -55,7 +55,7 @@ const StoryTableTitleSmall = styled.p`
   padding: 10px;
 `;
 const token = localStorage.getItem('token');
-const role = JSON.parse(token)?.message
+const role = token && JSON.parse(token).message
 
 const StoryTableCardItem = ({it,id, handleDeleteUser}) => {
     const [showModal, setShowModal] = useState(false)
@@ -74,7 +74,7 @@ const StoryTableCardItem = ({it,id, handleDeleteUser}) => {
                 <StarWhite style={{width: "5%", margin: 0,marginTop:'10px', cursor: "pointer", display: 'flex', alignItems: 'center', justifyContent:'space-between'}}/>
                 <StoryTableTitle>
                     <StoryTableName>
-                        <StoryTableNameImg src='https://pbs.twimg.com/profile_images/1356606198435438595/4Nad8CDb_400x400.jpg'/>
+                        <StoryTableNameImg src={it?.urlImage}/>
                         <StoryTableNameTitle>{it.name}</StoryTableNameTitle>
                     </StoryTableName>
                 </StoryTableTitle>

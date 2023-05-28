@@ -1,5 +1,5 @@
-import {LOGIN_SUCCESS, NEWS_SUCCESS, OPEN_MODAL, OPEN_MODAL_EDIT, REMOVE_NEWS} from "../constants";
-import {DELETE_USER, GET_ALL_USERS_SUCCESS} from "../constants";
+import {LOGIN_SUCCESS, NEWS_SUCCESS, OPEN_MODAL, OPEN_MODAL_EDIT, OPEN_MODAL_EDIT_FORM, REMOVE_NEWS} from "../constants";
+import {DELETE_USER, GET_ALL_USERS_SUCCESS,GET_ALL_STORY_ACTION_SUC} from "../constants";
 
 const initialState = {
   authData: {},
@@ -7,6 +7,8 @@ const initialState = {
   news: [],
   users:[],
   modalStatusEdit: false,
+  storyUsers: [],
+  modalForm: null,
 };
 
 const login = (state = initialState, { type, payload }) => {
@@ -47,6 +49,16 @@ const login = (state = initialState, { type, payload }) => {
       return {
         ...state,
         users: state.users.filter(it => it.id !== payload)
+      }
+    case GET_ALL_STORY_ACTION_SUC:
+      return {
+        ...state,
+        storyUsers: payload
+      }
+    case OPEN_MODAL_EDIT_FORM:
+      return {
+        ...state,
+        modalForm: payload
       }
     default: return state;
   }

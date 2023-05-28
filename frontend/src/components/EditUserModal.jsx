@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {ReactComponent as Back} from "../assets/back.svg";
 import {useDispatch} from "react-redux";
-import {openCloseModal} from "../redux/actions/actionCreator";
+import {editUserAction, openCloseModal} from "../redux/actions/actionCreator";
+import {ReactComponent as PasswordLogo} from "../assets/Icon.svg";
 
 
 const ModalContent = styled.body`
@@ -73,48 +74,58 @@ const ModalButton = styled.div`
   text-align: center;
   color: #FFFFFF;
   width: 280px;
-  
-  
+  margin-top: 20px;
+  cursor: pointer;
 `;
-const token = localStorage.getItem('token');
-const role = JSON.parse(token)?.message
+
+const PasswordContent = styled.div`
+  position: relative;
+  width: 200px;
+  margin: 0;
+`;
+
+
 
 function EditUserModal({show, setShowModal, it}) {
+
     const [user, setUser] = useState({...it})
-    const userFormData = new FormData()
+    const [image, setImage] = useState("")
+    const [password, setPassword] = useState("")
+    const [inputType, setInputType] = useState(true)
+    const changeInputType = () => {
+        setInputType(!inputType)
+    }
+    const onChangeImage = (e) => {
+        const file = e?.target?.files?.[0]; // Предполагается, что переменная event содержит событие, переданное в функцию обработчика выбора файла
+
+        if (file) {
+            setImage(file)
+        }
+    }
+    
+    const dispatch = useDispatch()
     useEffect(() => {
         setShowModal(show)
     },[show]);
-
+    console.log(user)
     const handleChange = (str, elem) => {
-        const updatedUser = { ...user, [str]: elem };
+        const updatedUser = { ...user, [str]: elem , birthDate : new Date(user.birthDate).getTime() };
+        updatedUser.experience = updatedUser.experience?.split(" ")[0]
+        delete updatedUser?.urlImage
+
         setUser(updatedUser);
 
-        // const userFormData = new FormData();
-        // userFormData.set(str, elem);
-        //
-        // console.log(userFormData.get(str));
-        // console.log(user);
     };
 
-    const sentDate = async () => {
+    const sentDate = () => {
         const userFormData = new FormData();
-        userFormData.set("data", user);
-        const res = await fetch("https://aman-alert.herokuapp.com/api/user/edit", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${role}`
-            },
-            body: JSON.stringify({
-                "data": user,
-                "image":""
-            })
-        })
+        userFormData.append("data",  JSON.stringify(user));
+        userFormData.append("image",  image);
 
-        console.log(userFormData)
-        console.log(res)
+        dispatch(editUserAction(userFormData))
+
+        console.log(userFormData.get("image"))
+
     }
 
     return <>{show ? <ModalContent >
@@ -145,7 +156,18 @@ function EditUserModal({show, setShowModal, it}) {
             <ModalLabel>
                 Номер
             </ModalLabel>
+            <ModalLabel >
+                Введите пароль
+            </ModalLabel>
+            <PasswordContent>
+                <ModalInput onChange={e =>handleChange("password", e.target.value )} type={inputType ? "password" : "text"} placeholder='Пароль'/>
+                <PasswordLogo style={{position:"absolute", right:"10px", top:"12px"}} onClick={changeInputType}/>
+            </PasswordContent>
             <ModalInput value={user.phone} onChange={(e) => handleChange("phone", e.target.value )} placeholder={"Номер"}/>
+            <ModalLabel>
+                Фотография
+            </ModalLabel>
+            <input onChange={onChangeImage}  type="file" accept="image/*,.pdf"/>
 
             <ModalButton onClick={sentDate}>
                 Сохранить

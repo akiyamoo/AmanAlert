@@ -2,11 +2,11 @@ const main_api = 'https://aman-alert.herokuapp.com/api'
 
 const user = localStorage.getItem('token');
 const token = user && JSON.parse(user).message;
-
+console.log(token, "token")
 const headers =  {
-      'Accept': 'application/json',
-      // 'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
-      'Authorization': `Bearer ${token}`
+  'Accept': 'application/json',
+  // 'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
+  'Authorization': `Bearer ${token}`
 }
 
 export const loginWithPassword = async ({login, password}) => {
@@ -58,20 +58,20 @@ export const AddNews = async (data) => {
     body: data
   })
 }
-  export const RemoveNews = async (id) => {
-    const res = await fetch(`${main_api}/news/delete/${id}`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        "newsId": id
-      })
+export const RemoveNews = async (id) => {
+  const res = await fetch(`${main_api}/news/delete/${id}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      "newsId": id
     })
+  })
 
-    return await res.json()
-  }
+  return await res.json()
+}
 export const deleteUserApi = async (id) => {
   console.log(id)
-  const res = await fetch(`https://aman-alert.herokuapp.com/api/user/delete/${id}`, {
+  const res = await fetch(`${main_api}/user/delete/${id}`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -84,3 +84,66 @@ export const deleteUserApi = async (id) => {
   // handleDeleteUser(res.ok, it)
 
 };
+
+export const getAllStorySaga = async () => {
+  const res = await fetch(`${main_api}/form/get-all`, {
+    method: 'GET',
+    headers
+  })
+
+  return await res.json()
+};
+
+export const addUser = async (data, setErr) => {
+  console.log(data.get("data"))
+  const res = await fetch(`${main_api}/user/create`, {
+        method: 'POST',
+        headers: headers,
+    body: data
+  })
+  console.log(res)
+  if(res.ok){
+    return res
+  }
+  else {
+    setErr(true)
+  }
+}
+
+export const deleteStoryApi = async (id) => {
+ await fetch(`${main_api}/form/delete/${id.payload}`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          "formID": id.payload
+        })
+  })
+
+}
+
+export const sendAnswerApi = async (id) => {
+  await fetch(`${main_api}/form/save-answer`, {
+         method: 'POST',
+        //  headers: headers,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+         body: JSON.stringify({
+          "formId": id.payload.formId,
+          "answer": id.payload.title
+         })
+   })
+
+ }
+
+export const editUser = async (data) => {
+  console.log(data.get("data"));
+  const res = await fetch(`${main_api}/user/edit`, {
+    method: 'POST',
+    headers: headers,
+    body: data
+  })
+  return res.json()
+}
