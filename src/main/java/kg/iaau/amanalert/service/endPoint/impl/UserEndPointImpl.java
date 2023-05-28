@@ -232,8 +232,13 @@ public class UserEndPointImpl implements UserEndPoint {
 
         UserValidateUtil.validatePhone(model.getPhone());
         //UserValidateUtil.validateEmail(model.getEmail());
-        UserValidateUtil.validatePassword(model.getPassword());
-        UserValidateUtil.validateUsername(model.getUsername());
+        if (isEditPassword) {
+            UserValidateUtil.validatePassword(model.getPassword());
+        }
+
+        if (isEditUsername) {
+            UserValidateUtil.validateUsername(model.getUsername());
+        }
 
         if (isEditUsername) {
             user.setUsername(model.getUsername());
