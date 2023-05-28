@@ -251,7 +251,7 @@ public class UserEndPointImpl implements UserEndPoint {
             date = new SimpleDateFormat("yyyy-MM-dd").parse(model.getBirthDate());
         } catch (Exception e) {
             try {
-                date = new Date(Integer.parseInt(model.getBirthDate()));
+                date = new Date(Long.parseLong(model.getBirthDate()));
             } catch (Exception ex) {
                 log.info("{}", ex);
             }
