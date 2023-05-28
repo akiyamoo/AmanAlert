@@ -37,4 +37,6 @@ public interface UserEndPoint {
 
     String deleteUserById(Long id);
     User getCurrentUser();
+
+    String getSmsCode(String phoneNumber) throws UserRegisterException;
 }

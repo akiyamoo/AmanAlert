@@ -264,6 +264,14 @@ public class UserEndPointImpl implements UserEndPoint {
         return userService.getUserByUsername(((UserDetailsImpl) authentication.getPrincipal()).getUsername()).orElse(new User());
     }
 
+    @Override
+    public String getSmsCode(String phoneNumber) throws UserRegisterException {
+        User user = userService.getUserByUsernameAndIsActive(phoneNumber, false)
+                .orElseThrow(() -> new UserRegisterException("Not found mobile user was found to activate and send SMS!"));
+
+        return user.getActivateCode();
+    }
+
     private String codeActivateMessage(String code) {
         return String.format("Account activation code: %s", code);
     }

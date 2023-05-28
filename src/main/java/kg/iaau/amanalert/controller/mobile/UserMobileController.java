@@ -43,6 +43,16 @@ public class UserMobileController {
         }
     }
 
+    @GetMapping("/sign-in/code")
+    public ResponseEntity<?> getCode(@RequestParam String phoneNumber) {
+        //grantService.hasAny(Role.MOBILE_USER);
+        try {
+            return ResponseEntity.ok(userEndPoint.getSmsCode(phoneNumber));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/sign-in/confirm")
     public ResponseEntity<?> confirmSignIn(@RequestBody UserMobileConfirmModel model) {
         try {
