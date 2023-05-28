@@ -240,7 +240,7 @@ public class UserEndPointImpl implements UserEndPoint {
         user.setPassword(isEditPassword ? model.getPassword() : user.getPassword());
         user.setEmail(model.getEmail());
         user.setBirthDate(new Date(model.getBirthDate()));
-        user.setImage(imageResource == null ? null : imageResource.getByteArray());
+        user.setImage(imageResource == null ? user.getImage() : imageResource.getByteArray());
         user.setEducation(model.getEducation());
         user.setPosition(model.getPosition());
         user.setExperience(model.getExperience());
