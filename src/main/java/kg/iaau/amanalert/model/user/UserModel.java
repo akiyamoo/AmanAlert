@@ -38,7 +38,7 @@ public class UserModel implements BaseModelTo<User> {
         this.username = user.getUsername();
         this.role = user.getRole();
         this.phone = user.getPhone();
-        this.birthDate = new SimpleDateFormat("yyyy-MM-dd").format(user.getBirthDate());
+        this.birthDate = birthDate == null ? null : new SimpleDateFormat("yyyy-MM-dd").format(user.getBirthDate());
         this.name = user.getName();
         this.email = user.getEmail();
         this.urlImage = UrlHostUtil.getHostUrl() + UrlHostUtil.getAvatarUrl() + this.id;
