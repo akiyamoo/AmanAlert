@@ -198,10 +198,15 @@ public class UserEndPointImpl implements UserEndPoint {
         boolean isEditPassword = model.getPassword() != null;
 
 
-        User user = userService.getUserByUsername(model.getUsername()).orElseThrow(
-                () -> new UserRegisterException("User not found!")
-        );
+        User user = userService.findUserById(model.getId());
 
+        if (user == null) {
+            throw new UserRegisterException("User not found!");
+        }
+
+        boolean isEditUsername = !user.getUsername().equals(model.getUsername());
+
+        if (isEditUsername) log.info("Edit username: id: {}, username: {}", user.getId(), model.getUsername());
         if (isEditPassword) log.info("Edit password: id: {}, password: {}", user.getId(), model.getPassword());
 
         if (Role.WEB_USER != model.getRole()) {
@@ -211,16 +216,32 @@ public class UserEndPointImpl implements UserEndPoint {
             throw new UserRegisterException("The date of birth is not filled in!");
         }
 
+        if (model.getUsername() == null) {
+            throw new UserRegisterException("Username is empty!");
+        }
+
+        User checkUser = userService.getUserByUsername(model.getUsername()).orElse(null);
+
+        if (checkUser != null) {
+            throw new UserRegisterException("Username is exist!");
+        }
+
         UserValidateUtil.validatePhone(model.getPhone());
         //UserValidateUtil.validateEmail(model.getEmail());
         UserValidateUtil.validatePassword(model.getPassword());
         UserValidateUtil.validateUsername(model.getUsername());
 
+        if (isEditUsername) {
+            user.setUsername(model.getUsername());
+        }
         user.setPhone(model.getPhone());
         user.setPassword(isEditPassword ? model.getPassword() : user.getPassword());
         user.setEmail(model.getEmail());
         user.setBirthDate(new Date(model.getBirthDate()));
         user.setImage(imageResource == null ? null : imageResource.getByteArray());
+        user.setEducation(model.getEducation());
+        user.setPosition(model.getPosition());
+        user.setExperience(model.getExperience());
 
         return userService.editUser(user, isEditPassword);
     }
