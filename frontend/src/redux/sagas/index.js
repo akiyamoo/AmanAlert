@@ -1,10 +1,10 @@
 import { takeEvery, put, call } from 'redux-saga/effects';
 import {ADD_NEWS, REMOVE_NEWS} from '../constants';
 import {getAllNewsSuc, getAuthSuc, openCloseModal} from '../actions/actionCreator';
-import {AddNews, getAllNewsApi, loginWithPassword, RemoveNews} from '../../api';
+import {AddNews, getAllNewsApi, loginWithPassword, RemoveNews} from '../../api/index';
 import {DELETE_USER, GET_ALL_USERS_REQUEST, LOGIN_REQUEST, NEWS_REQUEST, OPEN_MODAL} from '../constants';
 import {deleteUserReq, getAllUsersSuc} from '../actions/actionCreator';
-import {deleteUserApi, getAllUsersApi} from '../../api';
+import {deleteUserApi, getAllUsersApi} from '../../api/index';
 
 export function* handleLatestNews(login , password) {
   const hits = yield call(loginWithPassword, login, password);

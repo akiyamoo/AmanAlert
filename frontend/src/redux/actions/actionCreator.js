@@ -1,7 +1,7 @@
 import {
   ADD_NEWS,
   LOGIN_REQUEST, LOGIN_SUCCESS, NEWS_REQUEST, NEWS_SUCCESS, OPEN_MODAL, REMOVE_NEWS,
-  GET_ALL_USERS_REQUEST,GET_ALL_USERS_SUCCESS,DELETE_USER,
+  GET_ALL_USERS_REQUEST, GET_ALL_USERS_SUCCESS, DELETE_USER, OPEN_MODAL_EDIT,
 } from "../constants";
 
 export const getAuthReq = (login, password) => ({
@@ -15,6 +15,10 @@ export const getAuthSuc = (payload) => ({
 
 export const openCloseModal = (payload) => ({
   type: OPEN_MODAL,
+  payload
+});
+export const openCloseModalEdit = (payload) => ({
+  type: OPEN_MODAL_EDIT,
   payload
 });
 export const getAllNewsReq = () => ({

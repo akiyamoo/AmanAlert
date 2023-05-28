@@ -1,8 +1,14 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllNewsReq, getLatestNews, openCloseModal, removeNewsAction} from "../redux/actions/actionCreator";
+import {
+    getAllNewsReq,
+    getLatestNews,
+    openCloseModal,
+    openCloseModalEdit,
+    removeNewsAction
+} from "../redux/actions/actionCreator";
 import {ReactComponent as More} from "../assets/more.svg";
 
 const MainContainer = styled.div`
@@ -149,6 +155,28 @@ const NewsCartDescContent = styled.div`
   max-width: 120px;
   margin: 0;
 `;
+const AdminButton = styled.div`
+  cursor: pointer;
+  &:hover {
+   font-weight: bold;
+  } 
+
+  &:nth-child(2) {
+    margin-top: 5px;
+  }
+`;
+const AdminController = styled.div`
+  background: #FFFFFF;
+  border: 1px solid #D3D8E6;
+  box-shadow: 0px 1px 2px rgba(106, 122, 152, 0.15);
+  border-radius: 8px;
+  position: absolute;
+  bottom: -20px;
+  right: 40px;
+  width: 150px;
+  height: 60px;
+  padding: 10px;
+`;
 
 const NewsCartPhotoContent = styled.div`
   position: relative;
@@ -159,7 +187,9 @@ function StoryPage() {
     const dispatch = useDispatch();
     const news = useSelector(store => store.login)
     const token = localStorage.getItem('token');
-    const role = JSON.parse(token).role
+    const role = JSON.parse(token)?.role;
+    const [openAdminContoller, setOpenAdminContoller] = useState(false)
+    const [editNewsState, setEditNews] = useState(false)
 
     useEffect(() => {
         dispatch(getAllNewsReq())
@@ -167,6 +197,21 @@ function StoryPage() {
             navigate('/login')
         }
     }, [])
+
+    const openAdminButton = (id) => {
+        setOpenAdminContoller(!openAdminContoller)
+    }
+    const removeNewsFunc = (id) => {
+        dispatch(removeNewsAction(id))
+        window.location.reload()
+    }
+
+    const editNews = (id) => {
+        dispatch(openCloseModalEdit(true))
+        dispatch(openCloseModal(true))
+        // dispatch(removeNewsAction(id))
+        // window.location.reload()
+    }
 
     return (
         <MainContainer>
@@ -182,7 +227,8 @@ function StoryPage() {
 
                 <MainNewsContent>
                     <MainNewsContentPhoto>
-                        {role === 'ADMIN' && <More onClick={() => dispatch(removeNewsAction(news?.news[0].id))} style={{position: "absolute", bottom: "20px", right: "20px"}}/>}
+                        {role === 'ADMIN' && <More onClick={() => openAdminButton(news?.news[0].id)} style={{position: "absolute", bottom: "20px", right: "20px"}}/>}
+                        {openAdminContoller && <AdminController><AdminButton  onClick={() => removeNewsFunc(news?.news[0].id)}>Удалить</AdminButton><AdminButton onClick={() => editNews()}>Редактировать</AdminButton></AdminController>}
                         <MainNewsPhoto src={news?.news[0]?.urlImage}/>
                         <MainNewsContentImageTextMain>{news?.news[0]?.title}</MainNewsContentImageTextMain>
                         <MainNewsContentImageTextContent>
@@ -205,7 +251,7 @@ function StoryPage() {
                         return (
                             <NewsCart>
                                 <NewsCartPhotoContent>
-                                    {role === 'ADMIN' && <More onClick={() => dispatch(removeNewsAction(item.id))} style={{position: "absolute", bottom: "10px", right: "10px", width: "5px"}}/>}
+                                    {role === 'ADMIN' && <More onClick={() => openAdminButton(item.id)} style={{position: "absolute", bottom: "10px", right: "10px", width: "5px"}}/>}
                                     <NewsCartPhoto src={item.urlImage}/>
                                 </NewsCartPhotoContent>
                                 <NewsCartTitle>{item.title}</NewsCartTitle>

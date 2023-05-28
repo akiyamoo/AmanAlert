@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {BrowserRouter, Route, Routes, Link} from 'react-router-dom';
 import styled from "styled-components";
 
@@ -60,6 +60,10 @@ const MyLinkTitle = styled.p`
 function App() {
     const [activePath,setActivePath] = useState(window.location.pathname)
     const modal = useSelector(store => store.login)
+
+    // useEffect(() => {
+    //     if (!!window.location.pathname) setActivePath('/')
+    // },[window.location.pathname])
 
     return (
         <BrowserRouter>

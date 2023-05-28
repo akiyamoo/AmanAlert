@@ -77,7 +77,7 @@ const ModalButton = styled.div`
   
 `;
 const token = localStorage.getItem('token');
-const role = token == null ? null : JSON.parse(token).message
+const role = JSON.parse(token)?.message
 
 function EditUserModal({show, setShowModal, it}) {
     const [user, setUser] = useState({...it})

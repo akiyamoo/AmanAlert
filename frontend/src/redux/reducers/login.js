@@ -1,11 +1,12 @@
-import {LOGIN_SUCCESS, NEWS_SUCCESS, OPEN_MODAL, REMOVE_NEWS} from "../constants";
+import {LOGIN_SUCCESS, NEWS_SUCCESS, OPEN_MODAL, OPEN_MODAL_EDIT, REMOVE_NEWS} from "../constants";
 import {DELETE_USER, GET_ALL_USERS_SUCCESS} from "../constants";
 
 const initialState = {
   authData: {},
   modalStatus: false,
   news: [],
-  users:[]
+  users:[],
+  modalStatusEdit: false,
 };
 
 const login = (state = initialState, { type, payload }) => {
@@ -19,6 +20,11 @@ const login = (state = initialState, { type, payload }) => {
       return {
         ...state,
         modalStatus: payload,
+      };
+      case OPEN_MODAL_EDIT:
+      return {
+        ...state,
+        modalStatusEdit: payload,
       };
     case NEWS_SUCCESS:
       return {

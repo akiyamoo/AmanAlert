@@ -1,12 +1,12 @@
 const main_api = 'https://aman-alert.herokuapp.com/api'
 
-const token = localStorage.getItem('token');
-const role = token == null ? null : JSON.parse(token).message
+const user = localStorage.getItem('token');
+const token = user && JSON.parse(user).message;
 
 const headers =  {
       'Accept': 'application/json',
-      'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
-      'Authorization': `Bearer ${role}`
+      // 'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
+      'Authorization': `Bearer ${token}`
 }
 
 export const loginWithPassword = async ({login, password}) => {
@@ -49,18 +49,13 @@ export const getAllUsersApi = async () => {
     method: 'GET',
     headers,
   })
-  console.log(role)
   return await res.json()
 }
-export const AddNews = async (image, data) => {
-  console.log(data)
+export const AddNews = async (data) => {
   const res = await fetch(`${main_api}/news/save`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({
-      "image": image,
-      "data": data
-    })
+    body: data
   })
 }
   export const RemoveNews = async (id) => {
@@ -81,7 +76,7 @@ export const deleteUserApi = async (id) => {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${role}`
+      'Authorization': `Bearer ${token}`
     },
   })
   console.log(res.ok)

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {ReactComponent as Back} from "../assets/back.svg";
-import {useDispatch} from "react-redux";
-import {addNewsAction, openCloseModal} from "../redux/actions/actionCreator";
+import {useDispatch, useSelector} from "react-redux";
+import {addNewsAction, openCloseModal, openCloseModalEdit} from "../redux/actions/actionCreator";
 
 
 const ModalContent = styled.body`
@@ -92,6 +92,7 @@ const ModalButton = styled.div`
   position: absolute;
   bottom: 40px;
   left: 40px;
+  ${props => props.error && `background: red;`}
   
 `;
 const data = new window.FormData();
@@ -101,7 +102,9 @@ function Modal({show}) {
     const [title, setTitle] = useState('');
     const [descr, setDescr] = useState('');
     const [image, setImage] = useState('');
+    const [error, setErroe] = useState(false);
     const dispatch = useDispatch();
+    const modal = useSelector(store => store.login)
 
 
     useEffect(() => {
@@ -111,11 +114,19 @@ function Modal({show}) {
         });
 
         imageForm.append("image", image);
-        console.log(imageForm, data)
     },[title, descr, image])
 
     const createNews = (imageForm, data) => {
-        dispatch(addNewsAction(imageForm, data))
+        const formData = new FormData();
+        formData.append("data", JSON.stringify({title, description: descr}));
+        formData.append("image", image);
+        if (image && title && descr) {
+            dispatch(addNewsAction(formData))
+            setShowModal(false)
+            // window.location.reload()
+        } else {
+            setErroe(true)
+        }
     }
 
     const [user, setUser] = useState({})
@@ -128,11 +139,30 @@ function Modal({show}) {
         userFormData.append(str, elem)
     }
 
+    const onChangeImage = (e) => {
+        const file = e.target.files?.[0]; // Предполагается, что переменная event содержит событие, переданное в функцию обработчика выбора файла
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const base64String = reader.result;
+                setImage(base64String)
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    const closeModal = () => {
+        setErroe(false)
+        dispatch(openCloseModal(false))
+        dispatch(openCloseModalEdit(false))
+
+    }
+
     return <>{showModal ? <ModalContent >
         <ModalContentContainer>
-            <Back style={{position: 'absolute', top:'40px', right:"40px",zIndex:105}} onClick={() => dispatch(openCloseModal(false))}/>
+            <Back style={{position: 'absolute', top:'40px', right:"40px",zIndex:105}} onClick={() => closeModal()}/>
             <StoryContentTitle>
-                Добавить новость
+                {modal.modalStatusEdit ? "Редактировать новость" : "Добавить новость"}
             </StoryContentTitle>
 
             <ModalLabel>
@@ -151,9 +181,11 @@ function Modal({show}) {
             </ModalLabel>
             <ModalInputImg type="file" accept="image/*,.pdf"  onChange={(e) => setImage(e.target.files?.[0])}/>
 
-            <ModalButton onClick={() =>  createNews(imageForm, data)}>
+            <ModalButton error={error} onClick={() =>  createNews(imageForm, data)}>
                 Сохранить
             </ModalButton>
+
+            {error && <p style={{color:'red',marginTop:'50px'}}>Заполните все поля</p>}
 
         </ModalContentContainer>
     </ModalContent> : null}</>

@@ -97,7 +97,7 @@ function LoginPage() {
             localStorage.setItem('token', JSON.stringify(userData.authData))
             navigate('/')
             // window.location.reload();
-        } else if (userData.authData.message) {
+        } else if (userData.authData?.message) {
             setError(true)
         }
     },[userData?.authData])
@@ -128,7 +128,7 @@ function LoginPage() {
                             </PasswordContent>
                         </LoginLabel>
 
-                        {error ? <LoginTitle error={error} >{userData.authData.message}</LoginTitle> : null}
+                        {error ? <LoginTitle error={error} >{userData.authData?.message}</LoginTitle> : null}
 
                     </LoginBlock>
                     <LoginButton onClick={loginUser}>
