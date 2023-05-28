@@ -20,7 +20,7 @@ public class UserWebEditModel {
     String birthDate;
     String name;
     String email;
-    Integer experience;
+    String experience;
     String position;
     String education;
 }

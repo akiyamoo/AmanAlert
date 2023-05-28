@@ -245,7 +245,7 @@ public class UserEndPointImpl implements UserEndPoint {
         user.setImage(imageResource == null ? user.getImage() : imageResource.getByteArray());
         user.setEducation(model.getEducation());
         user.setPosition(model.getPosition());
-        user.setExperience(model.getExperience());
+        user.setExperience(Integer.parseInt(model.getExperience().split(" ")[0]));
 
         return userService.editUser(user, isEditPassword);
     }
