@@ -132,7 +132,7 @@ function EditUserModal({show, setShowModal, it}) {
         <ModalContentContainer>
             <Back style={{position: 'absolute', top:'40px', right:"40px",zIndex:105}} onClick={() => setShowModal(false)}/>
             <StoryContentTitle>
-            Редоктировать пользователя
+            Редактировать пользователя
             </StoryContentTitle>
 
             <ModalLabel>

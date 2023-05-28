@@ -17,7 +17,7 @@ public class UserWebEditModel {
     String password;
     Role role;
     String phone;
-    Long birthDate;
+    String birthDate;
     String name;
     String email;
     Integer experience;

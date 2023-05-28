@@ -25,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -191,7 +193,7 @@ public class UserEndPointImpl implements UserEndPoint {
     }
 
     @Override
-    public UserModel editWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException {
+    public UserModel editWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException, ParseException {
         UserWebEditModel model = gson.fromJson((String) formData.getFirst("data"), UserWebEditModel.class);
         ByteArrayResource imageResource = (ByteArrayResource) formData.getFirst("image");
 
@@ -239,7 +241,7 @@ public class UserEndPointImpl implements UserEndPoint {
         user.setPhone(model.getPhone());
         user.setPassword(isEditPassword ? model.getPassword() : user.getPassword());
         user.setEmail(model.getEmail());
-        user.setBirthDate(new Date(model.getBirthDate()));
+        user.setBirthDate(new SimpleDateFormat("yyyy-MM-dd").parse(model.getBirthDate()));
         user.setImage(imageResource == null ? user.getImage() : imageResource.getByteArray());
         user.setEducation(model.getEducation());
         user.setPosition(model.getPosition());

@@ -10,6 +10,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 public interface UserEndPoint {
@@ -27,7 +28,7 @@ public interface UserEndPoint {
 
     String editImageByUsername(String username, MultipartFile image) throws IOException, UserRegisterException;
 
-    UserModel editWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException;
+    UserModel editWebUser(MultiValueMap<String, Object> formData) throws UserRegisterException, ParseException;
 
     List<UserModel> getAllWebUsers();
 
