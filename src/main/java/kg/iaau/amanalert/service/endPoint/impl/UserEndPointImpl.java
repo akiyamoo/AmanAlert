@@ -220,10 +220,12 @@ public class UserEndPointImpl implements UserEndPoint {
             throw new UserRegisterException("Username is empty!");
         }
 
-        User checkUser = userService.getUserByUsername(model.getUsername()).orElse(null);
+        if (isEditUsername) {
+            User checkUser = userService.getUserByUsername(model.getUsername()).orElse(null);
 
-        if (checkUser != null) {
-            throw new UserRegisterException("Username is exist!");
+            if (checkUser != null) {
+                throw new UserRegisterException("Username is exist!");
+            }
         }
 
         UserValidateUtil.validatePhone(model.getPhone());
