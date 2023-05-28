@@ -76,7 +76,7 @@ public class UserWebController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/edit")
-    public ResponseEntity<?> editUser(@RequestParam("data") String json, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<?> editUser(@RequestParam("data") String json, @RequestParam(value = "image", required = false) MultipartFile image) {
         grantService.hasAny(Role.ADMIN);
 
         try {
